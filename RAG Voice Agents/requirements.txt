@@ -1,0 +1,4 @@
+aiofiles
+fastapi
+uvicorn
+pydantic

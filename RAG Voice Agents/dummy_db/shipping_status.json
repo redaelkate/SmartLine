@@ -1,0 +1,27 @@
+[
+    {
+      "tracking_number": "ABC123",
+      "status": "In Transit"
+    },
+    {
+      "tracking_number": "XYZ789",
+      "status": "Delivered"
+    },
+    {
+      "tracking_number": "LMN456",
+      "status": "Out for Delivery"
+    },
+    {
+      "tracking_number": "QRS234",
+      "status": "Shipped"
+    },
+    {
+      "tracking_number": "JKL890",
+      "status": "In Transit"
+    },
+    {
+      "tracking_number": "DEF678",
+      "status": "Delivered"
+    }
+  ]
+  
