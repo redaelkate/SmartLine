@@ -10,11 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
     "axios": "^1.7.9",
+    "exceljs": "^4.4.0",
+    "firebase": "^11.1.0",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
+    "react-apex": "^0.0.0",
+    "react-apexcharts": "^1.7.0",
     "react-dom": "^18.3.1",
-    "recharts": "^2.15.0"
+    "recharts": "^2.15.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
