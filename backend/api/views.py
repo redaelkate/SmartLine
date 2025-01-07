@@ -1,5 +1,6 @@
 from django.db.models import Count, Avg
 from rest_framework.response import Response
+from rest_framework import generics
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -11,6 +12,33 @@ from .models import (
 )
 
 import os 
+from .models import LeadGeneration
+from .serializers import LeadGenerationSerializer
+from .models import OrderConfirmation
+from .serializers import OrderConfirmationSerializer
+
+# List all orders or create a new order
+class OrderConfirmationListCreateView(generics.ListCreateAPIView):
+    queryset = OrderConfirmation.objects.all()
+    serializer_class = OrderConfirmationSerializer
+
+# Retrieve, update, or delete a specific order
+class OrderConfirmationRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = OrderConfirmation.objects.all()
+    serializer_class = OrderConfirmationSerializer
+
+
+# List all leads or create a new lead
+class LeadGenerationListCreateView(generics.ListCreateAPIView):
+    queryset = LeadGeneration.objects.all()
+    serializer_class = LeadGenerationSerializer
+
+# Retrieve, update, or delete a specific lead
+class LeadGenerationRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LeadGeneration.objects.all()
+    serializer_class = LeadGenerationSerializer
+
+
 
 
 @csrf_exempt

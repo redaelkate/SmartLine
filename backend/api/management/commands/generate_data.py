@@ -6,13 +6,41 @@ from api.models import (
     Organization, Admin, Agent, Call, CallTranscript, CallPerformance,
     AIInteractionMetrics, CustomerSatisfaction, AgentPerformance, CallTrends,
     CallQueue, ServiceLevel, ConversionAnalytics, AgentInteractionLog,
-    DetailedCallAnalytics
+    DetailedCallAnalytics, LeadGeneration, OrderConfirmation
 )
 
 fake = Faker()
 
 class Command(BaseCommand):
     help = 'Generates dummy data for all models'
+    
+
+
+        # Generate Leads
+    for _ in range(10):  # Create 10 leads
+            lead = LeadGeneration.objects.create(
+                FirstName=fake.first_name(),
+                LastName=fake.last_name(),
+                Email=fake.email(),
+                PhoneNumber=fake.phone_number(),
+                CompanyName=fake.company(),
+                JobTitle=fake.job(),
+                LeadSource=random.choice(['Website', 'Referral', 'Social Media']),
+                LeadStatus=random.choice(['New', 'Contacted', 'Qualified']),
+            )
+            self.stdout.write(f"Created Lead: {lead.FirstName} {lead.LastName}")
+
+            # Generate Orders for each Lead
+            for _ in range(random.randint(1, 3)):  # Create 1-3 orders per lead
+                order = OrderConfirmation.objects.create(
+                    LeadID=lead,
+                    ProductID=random.randint(1, 100),  # Random product ID
+                    Quantity=random.randint(1, 5),     # Random quantity
+                    TotalAmount=round(random.uniform(50, 500), 2),  # Random total amount
+                    PaymentStatus=random.choice(['Pending', 'Paid', 'Failed']),
+                    OrderStatus=random.choice(['Processing', 'Shipped', 'Delivered']),
+                )
+                self.stdout.write(f"Created Order: {order.OrderID} for Lead {lead.LeadID}")
 
     def handle(self, *args, **kwargs):
         self.stdout.write("Generating dummy data...")
