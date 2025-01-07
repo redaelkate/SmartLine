@@ -93,6 +93,12 @@ class SubscriptionPlanDistribution(APIView):
         data = Organization.objects.values('subscription_plan').annotate(count=Count('id'))
         return Response(data)
 
+
+class TotalClientsPerMonth(APIView):
+    def get(self, request):
+        data = Client.objects.values('created_at').annotate(count=Count('id'))
+        return Response(data)
+
 class AdminsPerOrganization(APIView):
     def get(self, request):
         data = Admin.objects.values('organization__name').annotate(count=Count('id'))

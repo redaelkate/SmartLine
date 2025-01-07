@@ -5,7 +5,7 @@ import { UsersPage } from './pages/UsersPage';
 import { BillingPage } from './pages/BillingPage';
 import Summary from './components/CallHistoryList'; // Updated import
 import { mockCallHistory } from './data/mockCallHistory';
-
+import AIAgentManager from './pages/settings';
 function App() {
   const [currentPage, setCurrentPage] = React.useState('dashboard');
 
@@ -19,6 +19,8 @@ function App() {
         return <BillingPage />;
       case 'callHistory': // Use a consistent naming convention
         return <Summary callHistory={mockCallHistory} />;
+      case 'settings':
+        return <AIAgentManager />;
       default:
         return <Dashboard />;
     }

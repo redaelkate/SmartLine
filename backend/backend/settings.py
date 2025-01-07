@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'admin_interface',
     'colorfield',
+    'django_extensions',
     'corsheaders',
     'django_seed',
     'rest_framework',

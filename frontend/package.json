@@ -13,6 +13,8 @@
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "@mui/icons-material": "^6.3.1",
+    "@mui/material": "^6.3.1",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
     "exceljs": "^4.4.0",

@@ -62,6 +62,8 @@ export const Dashboard = () => {
     fetchData();
   }, []);
 
+  const [total_users, setTotalUsers] = useState(0);
+
   // Memoize data transformations
   const adminsPerOrgData = useMemo(() => dashboardData.adminsPerOrg.map((item) => item.count), [dashboardData.adminsPerOrg]);
   const adminsPerOrgCategories = useMemo(() => dashboardData.adminsPerOrg.map((item) => item.organization__name), [dashboardData.adminsPerOrg]);
@@ -132,7 +134,7 @@ export const Dashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <StatsCard title="Total Users" value="12,345" icon={Users} trend={12} />
+          <StatsCard title="Total Users" value={total_users.toString()} icon={Users} trend={12} />
           <StatsCard title="Monthly Revenue" value="$54,321" icon={DollarSign} trend={8} />
           <StatsCard title="Active Sessions" value="2,456" icon={BarChart3} trend={-3} />
         </div>
