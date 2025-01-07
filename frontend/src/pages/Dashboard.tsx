@@ -1,99 +1,127 @@
 import { BarChart3, Users, DollarSign } from "lucide-react";
-import Chart from "react-apexcharts";
+import { lazy, Suspense, useEffect, useState, useMemo } from "react"; // Use React's lazy and Suspense
 import { StatsCard } from "../components/StatsCard";
-import { RecentUsers } from "../components/RecentUsers";
 import { QuickActions } from "../components/dashboard/QuickActions";
 import "./Dashboard.css";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 
-const primary = {
-  500: "#1D4ED8",
-  300: "#93C5FD"
-};
-
-const neutral = {
-  500: "#6B7280",
-  300: "#D1D5DB"
-};
+// Lazy load the Chart component
+const Chart = lazy(() => import("react-apexcharts"));
 
 export const Dashboard = () => {
-  const [subscriptionDistribution, setSubscriptionDistribution] = useState([]);
-  const [adminsPerOrg, setAdminsPerOrg] = useState([]);
-  const [agentStatus, setAgentStatus] = useState([]);
-  const [callType, setCallType] = useState([]);
-  const [avgCallDuration, setAvgCallDuration] = useState([]);
-  const [aiSuccessRate, setAISuccessRate] = useState([]);
-  const [satisfactionScore, setSatisfactionScore] = useState([]);
-  const [callsHandledByAgent, setCallsHandledByAgent] = useState([]);
-  const [totalCallsOverTime, setTotalCallsOverTime] = useState([]);
-  const [avgWaitTime, setAvgWaitTime] = useState([]);
-  const [serviceLevelPercentage, setServiceLevelPercentage] = useState([]);
-  const [conversionRate, setConversionRate] = useState([]);
-  const [interactionType, setInteractionType] = useState([]);
-  const [callCategory, setCallCategory] = useState([]);
-  const [transcriptLength, setTranscriptLength] = useState([]);
+  const [dashboardData, setDashboardData] = useState({
+    adminsPerOrg: [],
+    agentStatus: [],
+    callType: [],
+    avgCallDuration: [],
+    aiSuccessRate: [],
+    satisfactionScore: [],
+    callsHandledByAgent: [],
+    totalCallsOverTime: [],
+    avgWaitTime: [],
+    serviceLevelPercentage: [],
+    conversionRate: [],
+    interactionType: [],
+    callCategory: [],
+    transcriptLength: [],
+  });
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch data from the API
   useEffect(() => {
-    // Fetch data from all API endpoints
     const fetchData = async () => {
       try {
-        const [
-          subscriptionRes,
-          adminsRes,
-          agentStatusRes,
-          callTypeRes,
-          avgCallDurationRes,
-          aiSuccessRateRes,
-          satisfactionScoreRes,
-          callsHandledRes,
-          totalCallsRes,
-          avgWaitTimeRes,
-          serviceLevelRes,
-          conversionRateRes,
-          interactionTypeRes,
-          callCategoryRes,
-          transcriptLengthRes,
-        ] = await Promise.all([
-          axios.get("http://127.0.0.1:8000/api/subscription-distribution/"),
-          axios.get("http://127.0.0.1:8000/api/admins-per-organization/"),
-          axios.get("http://127.0.0.1:8000/api/agent-status-distribution/"),
-          axios.get("http://127.0.0.1:8000/api/call-type-distribution/"),
-          axios.get("http://127.0.0.1:8000/api/average-call-duration/"),
-          axios.get("http://127.0.0.1:8000/api/ai-success-rate/"),
-          axios.get("http://127.0.0.1:8000/api/satisfaction-score-distribution/"),
-          axios.get("http://127.0.0.1:8000/api/calls-handled-by-agent/"),
-          axios.get("http://127.0.0.1:8000/api/total-calls-over-time/"),
-          axios.get("http://127.0.0.1:8000/api/average-wait-time/"),
-          axios.get("http://127.0.0.1:8000/api/service-level-percentage/"),
-          axios.get("http://127.0.0.1:8000/api/conversion-rate-over-time/"),
-          axios.get("http://127.0.0.1:8000/api/interaction-type-distribution/"),
-          axios.get("http://127.0.0.1:8000/api/call-category-distribution/"),
-          axios.get("http://127.0.0.1:8000/api/transcript-length-distribution/"),
-        ]);
-
-        setSubscriptionDistribution(subscriptionRes.data);
-        setAdminsPerOrg(adminsRes.data);
-        setAgentStatus(agentStatusRes.data);
-        setCallType(callTypeRes.data);
-        setAvgCallDuration(avgCallDurationRes.data);
-        setAISuccessRate(aiSuccessRateRes.data);
-        setSatisfactionScore(satisfactionScoreRes.data);
-        setCallsHandledByAgent(callsHandledRes.data);
-        setTotalCallsOverTime(totalCallsRes.data);
-        setAvgWaitTime(avgWaitTimeRes.data);
-        setServiceLevelPercentage(serviceLevelRes.data);
-        setConversionRate(conversionRateRes.data);
-        setInteractionType(interactionTypeRes.data);
-        setCallCategory(callCategoryRes.data);
-        setTranscriptLength(transcriptLengthRes.data);
+        const response = await axios.get("https://d0rgham.pythonanywhere.com/api/dashboard-data/");
+        setDashboardData({
+          adminsPerOrg: response.data.admins_per_organization || [],
+          agentStatus: response.data.agent_status_distribution || [],
+          callType: response.data.call_type_distribution || [],
+          avgCallDuration: response.data.average_call_duration || [],
+          aiSuccessRate: response.data.ai_success_rate || [],
+          satisfactionScore: response.data.satisfaction_score_distribution || [],
+          callsHandledByAgent: response.data.calls_handled_by_agent || [],
+          totalCallsOverTime: response.data.total_calls_over_time || [],
+          avgWaitTime: response.data.average_wait_time || [],
+          serviceLevelPercentage: response.data.service_level_percentage || [],
+          conversionRate: response.data.conversion_rate || [],
+          interactionType: response.data.interaction_type_distribution || [],
+          callCategory: response.data.call_category_distribution || [],
+          transcriptLength: response.data.transcript_length_distribution || [],
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to fetch data. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
+
+  // Memoize data transformations
+  const adminsPerOrgData = useMemo(() => dashboardData.adminsPerOrg.map((item) => item.count), [dashboardData.adminsPerOrg]);
+  const adminsPerOrgCategories = useMemo(() => dashboardData.adminsPerOrg.map((item) => item.organization__name), [dashboardData.adminsPerOrg]);
+
+  const agentStatusData = useMemo(() => dashboardData.agentStatus.map((item) => item.count), [dashboardData.agentStatus]);
+  const agentStatusLabels = useMemo(() => dashboardData.agentStatus.map((item) => item.status), [dashboardData.agentStatus]);
+
+  const callTypeData = useMemo(() => dashboardData.callType.map((item) => item.count), [dashboardData.callType]);
+  const callTypeCategories = useMemo(() => dashboardData.callType.map((item) => item.call_type), [dashboardData.callType]);
+
+  const avgCallDurationData = useMemo(() => dashboardData.avgCallDuration.map((item) => parseInt(item.avg_duration)), [dashboardData.avgCallDuration]);
+  const avgCallDurationCategories = useMemo(() => dashboardData.avgCallDuration.map((item) => item.agent__name), [dashboardData.avgCallDuration]);
+
+  const aiSuccessRateData = useMemo(() => dashboardData.aiSuccessRate.map((item) => item.avg_success_rate), [dashboardData.aiSuccessRate]);
+  const aiSuccessRateCategories = useMemo(() => dashboardData.aiSuccessRate.map((item) => item.date), [dashboardData.aiSuccessRate]);
+
+  const satisfactionScoreData = useMemo(() => dashboardData.satisfactionScore.map((item) => item.count), [dashboardData.satisfactionScore]);
+  const satisfactionScoreCategories = useMemo(() => dashboardData.satisfactionScore.map((item) => item.satisfaction_score), [dashboardData.satisfactionScore]);
+
+  const callsHandledByAgentData = useMemo(() => dashboardData.callsHandledByAgent.map((item) => item.total_calls), [dashboardData.callsHandledByAgent]);
+  const callsHandledByAgentCategories = useMemo(() => dashboardData.callsHandledByAgent.map((item) => item.agent__name), [dashboardData.callsHandledByAgent]);
+
+  const totalCallsOverTimeData = useMemo(() => dashboardData.totalCallsOverTime.map((item) => item.total_calls), [dashboardData.totalCallsOverTime]);
+  const totalCallsOverTimeCategories = useMemo(() => dashboardData.totalCallsOverTime.map((item) => item.date), [dashboardData.totalCallsOverTime]);
+
+  const avgWaitTimeData = useMemo(() => dashboardData.avgWaitTime.map((item) => parseInt(item.avg_wait_time)), [dashboardData.avgWaitTime]);
+  const avgWaitTimeCategories = useMemo(() => dashboardData.avgWaitTime.map((item) => item.date), [dashboardData.avgWaitTime]);
+
+  const serviceLevelPercentageData = useMemo(() => dashboardData.serviceLevelPercentage.map((item) => parseInt(item.avg_service_level)), [dashboardData.serviceLevelPercentage]);
+  const serviceLevelPercentageCategories = useMemo(() => dashboardData.serviceLevelPercentage.map((item) => item.date), [dashboardData.serviceLevelPercentage]);
+
+  const conversionRateData = useMemo(() => dashboardData.conversionRate.map((item) => parseInt(item.avg_conversion_rate)), [dashboardData.conversionRate]);
+  const conversionRateCategories = useMemo(() => dashboardData.conversionRate.map((item) => item.date), [dashboardData.conversionRate]);
+
+  const interactionTypeData = useMemo(() => dashboardData.interactionType.map((item) => item.count), [dashboardData.interactionType]);
+  const interactionTypeCategories = useMemo(() => dashboardData.interactionType.map((item) => item.interaction_type), [dashboardData.interactionType]);
+
+  const callCategoryData = useMemo(() => dashboardData.callCategory.map((item) => item.count), [dashboardData.callCategory]);
+  const callCategoryCategories = useMemo(() => dashboardData.callCategory.map((item) => item.call_category), [dashboardData.callCategory]);
+
+  const transcriptLengthData = useMemo(() => dashboardData.transcriptLength.map((item) => item.count), [dashboardData.transcriptLength]);
+  const transcriptLengthCategories = useMemo(() => dashboardData.transcriptLength.map((item) => item.length), [dashboardData.transcriptLength]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ClipLoader color="#1D4ED8" size={50} />
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div id="webcrumbs" className="w-full h-full p-4">
@@ -112,200 +140,215 @@ export const Dashboard = () => {
         <QuickActions />
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Subscription Plan Distribution */}
-          <Chart
-            type="bar"
-            series={[{ data: subscriptionDistribution.map((item) => item.count) }]}
-            options={{
-              chart: { toolbar: { show: true } },
-              xaxis: { categories: ['Premium', 'Enterprise', 'Basic'] },
-              title: { text: 'Subscription Plan Distribution' }
-            }}
-            width="100%"
-            height="300px"
-          />
-
           {/* Admins per Organization */}
-          <Chart
-            type="bar"
-            series={[{ data: adminsPerOrg.map((item) => item.count) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: adminsPerOrg.map((item) => item.organization__name) },
-              title: { text: 'Admins per Organization' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="bar"
+              series={[{ data: adminsPerOrgData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: adminsPerOrgCategories },
+                title: { text: "Admins per Organization" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Agent Status Distribution */}
-          <Chart
-            type="donut"
-            series={agentStatus.map((item) => item.count)}
-            options={{
-              chart: { toolbar: { show: false } },
-              labels: agentStatus.map((item) => item.status),
-              title: { text: 'Agent Status Distribution' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="donut"
+              series={agentStatusData}
+              options={{
+                chart: { toolbar: { show: false } },
+                labels: agentStatusLabels,
+                title: { text: "Agent Status Distribution" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Call Type Distribution */}
-          <Chart
-            type="bar"
-            series={[{ data: callType.map((item) => item.count) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: callType.map((item) => item.call_type) },
-              title: { text: 'Call Type Distribution' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="bar"
+              series={[{ data: callTypeData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: callTypeCategories },
+                title: { text: "Call Type Distribution" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Average Call Duration by Agent */}
-          <Chart
-            type="bar"
-            series={[{ data: avgCallDuration.map((item) => parseInt(item.avg_duration)) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: avgCallDuration.map((item) => item.agent__name) },
-              title: { text: 'Average Call Duration by Agent' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="bar"
+              series={[{ data: avgCallDurationData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: avgCallDurationCategories },
+                title: { text: "Average Call Duration by Agent" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* AI Success Rate Over Time */}
-          <Chart
-            type="line"
-            series={[{ name: 'AI Success Rate', data: aiSuccessRate.map((item) => parseInt(item.avg_success_rate)) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: aiSuccessRate.map((item) => item.date) },
-              title: { text: 'AI Success Rate Over Time' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="line"
+              series={[{ name: "AI Success Rate", data: aiSuccessRateData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: aiSuccessRateCategories },
+                title: { text: "AI Success Rate Over Time" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Satisfaction Score Distribution */}
-          <Chart
-            type="bar"
-            series={[{ data: satisfactionScore.map((item) => item.count) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: satisfactionScore.map((item) => item.satisfaction_score) },
-              title: { text: 'Satisfaction Score Distribution' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="bar"
+              series={[{ data: satisfactionScoreData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: satisfactionScoreCategories },
+                title: { text: "Satisfaction Score Distribution" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Calls Handled by Agent */}
-          <Chart
-            type="bar"
-            series={[{ data: callsHandledByAgent.map((item) => item.total_calls) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: callsHandledByAgent.map((item) => item.agent__name) },
-              title: { text: 'Calls Handled by Agent' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="bar"
+              series={[{ data: callsHandledByAgentData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: callsHandledByAgentCategories },
+                title: { text: "Calls Handled by Agent" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Total Calls Over Time */}
-          <Chart
-            type="line"
-            series={[{ name: 'Total Calls', data: totalCallsOverTime.map((item) => item.total_calls) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: totalCallsOverTime.map((item) => item.date) },
-              title: { text: 'Total Calls Over Time' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="line"
+              series={[{ name: "Total Calls", data: totalCallsOverTimeData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: totalCallsOverTimeCategories },
+                title: { text: "Total Calls Over Time" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Average Wait Time Over Time */}
-          <Chart
-            type="line"
-            series={[{ name: 'Average Wait Time', data: avgWaitTime.map((item) => parseInt(item.avg_wait_time)) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: avgWaitTime.map((item) => item.date) },
-              title: { text: 'Average Wait Time Over Time' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="line"
+              series={[{ name: "Average Wait Time", data: avgWaitTimeData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: avgWaitTimeCategories },
+                title: { text: "Average Wait Time Over Time" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Service Level Percentage Over Time */}
-          <Chart
-            type="line"
-            series={[{ name: 'Service Level Percentage', data: serviceLevelPercentage.map((item) => parseInt(item.avg_service_level)) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: serviceLevelPercentage.map((item) => item.date) },
-              title: { text: 'Service Level Percentage Over Time' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="line"
+              series={[{ name: "Service Level Percentage", data: serviceLevelPercentageData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: serviceLevelPercentageCategories },
+                title: { text: "Service Level Percentage Over Time" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Conversion Rate Over Time */}
-          <Chart
-            type="line"
-            series={[{ name: 'Conversion Rate', data: conversionRate.map((item) => parseInt(item.avg_conversion_rate)) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: conversionRate.map((item) => item.date) },
-              title: { text: 'Conversion Rate Over Time' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="line"
+              series={[{ name: "Conversion Rate", data: conversionRateData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: conversionRateCategories },
+                title: { text: "Conversion Rate Over Time" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Interaction Type Distribution */}
-          <Chart
-            type="bar"
-            series={[{ data: interactionType.map((item) => item.count) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: interactionType.map((item) => item.interaction_type) },
-              title: { text: 'Interaction Type Distribution' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="bar"
+              series={[{ data: interactionTypeData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: interactionTypeCategories },
+                title: { text: "Interaction Type Distribution" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Call Category Distribution */}
-          <Chart
-            type="bar"
-            series={[{ data: callCategory.map((item) => item.count) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: callCategory.map((item) => item.call_category) },
-              title: { text: 'Call Category Distribution' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="bar"
+              series={[{ data: callCategoryData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: callCategoryCategories },
+                title: { text: "Call Category Distribution" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
 
           {/* Transcript Length Distribution */}
-          <Chart
-            type="bar"
-            series={[{ data: transcriptLength.map((item) => item.count) }]}
-            options={{
-              chart: { toolbar: { show: false } },
-              xaxis: { categories: transcriptLength.map((item) => item.length) },
-              title: { text: 'Transcript Length Distribution' }
-            }}
-            width="100%"
-            height="300px"
-          />
+          <Suspense fallback={<div>Loading Chart...</div>}>
+            <Chart
+              type="bar"
+              series={[{ data: transcriptLengthData }]}
+              options={{
+                chart: { toolbar: { show: false } },
+                xaxis: { categories: transcriptLengthCategories },
+                title: { text: "Transcript Length Distribution" },
+              }}
+              width="100%"
+              height="300px"
+            />
+          </Suspense>
         </div>
       </div>
     </div>

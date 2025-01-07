@@ -4,7 +4,7 @@ from .views import (
     CallTypeDistribution, AverageCallDurationByAgent, AISuccessRateOverTime,
     SatisfactionScoreDistribution, CallsHandledByAgent, TotalCallsOverTime,
     AverageWaitTimeOverTime, ServiceLevelPercentageOverTime, ConversionRateOverTime,
-    InteractionTypeDistribution, CallCategoryDistribution, TranscriptLengthDistribution
+    InteractionTypeDistribution, CallCategoryDistribution, TranscriptLengthDistribution,DashboardData,upload_file
 )
 
 urlpatterns = [
@@ -23,4 +23,7 @@ urlpatterns = [
     path('interaction-type-distribution/', InteractionTypeDistribution.as_view()),
     path('call-category-distribution/', CallCategoryDistribution.as_view()),
     path('transcript-length-distribution/', TranscriptLengthDistribution.as_view()),
+    path('dashboard-data/', DashboardData.as_view()),
+    path('upload/', upload_file, name='upload_file'),
+
 ]

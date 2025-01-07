@@ -17,7 +17,6 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
   { icon: Users, label: 'Users', id: 'users' },
   { icon: CreditCard, label: 'Billing', id: 'billing' },
-  { icon: BarChart3, label: 'Analytics', id: 'analytics' },
   { icon: Bell, label: 'Notifications', id: 'notifications' },
   { icon: Settings, label: 'Settings', id: 'settings' },
 ];
