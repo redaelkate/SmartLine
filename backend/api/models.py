@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import uuid
 
 # Create your models here.
 from django.db import models
@@ -38,6 +39,18 @@ class Admin(models.Model):
     def __str__(self):
         return self.email
 
+class Client(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="clients")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
 
 # AI Agent Model
 class Agent(models.Model):
@@ -60,7 +73,6 @@ class Agent(models.Model):
         return self.name
 
 
-# Call Model
 class Call(models.Model):
     INBOUND = 'inbound'
     OUTBOUND = 'outbound'
@@ -82,6 +94,7 @@ class Call(models.Model):
 
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="calls")
     agent = models.ForeignKey(Agent, on_delete=models.SET_NULL, null=True, related_name="calls")
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="calls", null=True, blank=True)  # Add this line
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True, blank=True)
     call_type = models.CharField(max_length=20, choices=CALL_TYPES)
@@ -90,7 +103,6 @@ class Call(models.Model):
 
     def __str__(self):
         return f"Call {self.id} - {self.organization.name}"
-
 
 # Call Transcript Model
 class CallTranscript(models.Model):

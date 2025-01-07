@@ -3,6 +3,8 @@ import { Sidebar } from './components/Sidebar';
 import { Dashboard } from "./pages/Dashboard";
 import { UsersPage } from './pages/UsersPage';
 import { BillingPage } from './pages/BillingPage';
+import Summary from './components/CallHistoryList'; // Updated import
+import { mockCallHistory } from './data/mockCallHistory';
 
 function App() {
   const [currentPage, setCurrentPage] = React.useState('dashboard');
@@ -15,6 +17,8 @@ function App() {
         return <UsersPage />;
       case 'billing':
         return <BillingPage />;
+      case 'callHistory': // Use a consistent naming convention
+        return <Summary callHistory={mockCallHistory} />;
       default:
         return <Dashboard />;
     }
@@ -23,7 +27,7 @@ function App() {
   return (
     <div className="flex bg-gray-50">
       <Sidebar onNavigate={setCurrentPage} />
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto">
         {renderPage()}
       </main>
     </div>

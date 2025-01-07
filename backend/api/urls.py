@@ -1,17 +1,26 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (
     SubscriptionPlanDistribution, AdminsPerOrganization, AgentStatusDistribution,
     CallTypeDistribution, AverageCallDurationByAgent, AISuccessRateOverTime,
     SatisfactionScoreDistribution, CallsHandledByAgent, TotalCallsOverTime,
     AverageWaitTimeOverTime, ServiceLevelPercentageOverTime, ConversionRateOverTime,
-    InteractionTypeDistribution, CallCategoryDistribution, TranscriptLengthDistribution,DashboardData,upload_file,
-    LeadGenerationListCreateView,
-    LeadGenerationRetrieveUpdateDestroyView,
-    OrderConfirmationListCreateView,
-    OrderConfirmationRetrieveUpdateDestroyView,
+    InteractionTypeDistribution, CallCategoryDistribution, TranscriptLengthDistribution,
+    DashboardData, upload_file,
+    LeadGenerationListCreateView, LeadGenerationRetrieveUpdateDestroyView,
+    OrderConfirmationListCreateView, OrderConfirmationRetrieveUpdateDestroyView,
+    AgentListCreateView, AgentRetrieveUpdateDestroyView,
+    ClientViewSet, CallViewSet, AgentViewSet, upload_leads, upload_orders
 )
 
+# Create a router and register the viewsets
+router = DefaultRouter()
+router.register(r'clients', ClientViewSet)  # Generates URLs for ClientViewSet
+router.register(r'calls', CallViewSet)      # Generates URLs for CallViewSet
+router.register(r'agents', AgentViewSet)    # Generates URLs for AgentViewSet
+
 urlpatterns = [
+    # API endpoints for analytics and dashboards
     path('subscription-distribution/', SubscriptionPlanDistribution.as_view()),
     path('admins-per-organization/', AdminsPerOrganization.as_view()),
     path('agent-status-distribution/', AgentStatusDistribution.as_view()),
@@ -28,10 +37,24 @@ urlpatterns = [
     path('call-category-distribution/', CallCategoryDistribution.as_view()),
     path('transcript-length-distribution/', TranscriptLengthDistribution.as_view()),
     path('dashboard-data/', DashboardData.as_view()),
+
+    # File upload endpoint
     path('upload/', upload_file, name='upload_file'),
+    path('upload/leads/', upload_leads, name='upload-leads'),
+    path('upload/orders/', upload_orders, name='upload-orders'),
+
+    # Lead generation endpoints
     path('leads/', LeadGenerationListCreateView.as_view(), name='lead-list-create'),
     path('leads/<int:pk>/', LeadGenerationRetrieveUpdateDestroyView.as_view(), name='lead-retrieve-update-destroy'),
+
+    # Order confirmation endpoints
     path('orders/', OrderConfirmationListCreateView.as_view(), name='order-list-create'),
     path('orders/<int:pk>/', OrderConfirmationRetrieveUpdateDestroyView.as_view(), name='order-retrieve-update-destroy'),
 
+    # Agent endpoints (if not using ViewSet)
+    path('agents/', AgentListCreateView.as_view(), name='agent-list-create'),
+    path('agents/<int:pk>/', AgentRetrieveUpdateDestroyView.as_view(), name='agent-retrieve-update-destroy'),
+
+    # Include the router's URLs (for ClientViewSet, CallViewSet, and AgentViewSet)
+    path('', include(router.urls)),
 ]
