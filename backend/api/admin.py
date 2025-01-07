@@ -20,7 +20,7 @@ admin.site.register(AgentInteractionLog)
 admin.site.register(ConversionAnalytics)
 admin.site.register(ServiceLevel)   
 admin.site.register(CallQueue)
-
+admin.site.register(UploadedFile)
 
 
 class CustomUserAdmin(UserAdmin):
