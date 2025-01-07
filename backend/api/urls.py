@@ -4,7 +4,11 @@ from .views import (
     CallTypeDistribution, AverageCallDurationByAgent, AISuccessRateOverTime,
     SatisfactionScoreDistribution, CallsHandledByAgent, TotalCallsOverTime,
     AverageWaitTimeOverTime, ServiceLevelPercentageOverTime, ConversionRateOverTime,
-    InteractionTypeDistribution, CallCategoryDistribution, TranscriptLengthDistribution,DashboardData,upload_file
+    InteractionTypeDistribution, CallCategoryDistribution, TranscriptLengthDistribution,DashboardData,upload_file,
+    LeadGenerationListCreateView,
+    LeadGenerationRetrieveUpdateDestroyView,
+    OrderConfirmationListCreateView,
+    OrderConfirmationRetrieveUpdateDestroyView,
 )
 
 urlpatterns = [
@@ -25,5 +29,9 @@ urlpatterns = [
     path('transcript-length-distribution/', TranscriptLengthDistribution.as_view()),
     path('dashboard-data/', DashboardData.as_view()),
     path('upload/', upload_file, name='upload_file'),
+    path('leads/', LeadGenerationListCreateView.as_view(), name='lead-list-create'),
+    path('leads/<int:pk>/', LeadGenerationRetrieveUpdateDestroyView.as_view(), name='lead-retrieve-update-destroy'),
+    path('orders/', OrderConfirmationListCreateView.as_view(), name='order-list-create'),
+    path('orders/<int:pk>/', OrderConfirmationRetrieveUpdateDestroyView.as_view(), name='order-retrieve-update-destroy'),
 
 ]

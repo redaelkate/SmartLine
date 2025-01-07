@@ -75,7 +75,7 @@ export const Dashboard = () => {
   const avgCallDurationData = useMemo(() => dashboardData.avgCallDuration.map((item) => parseInt(item.avg_duration)), [dashboardData.avgCallDuration]);
   const avgCallDurationCategories = useMemo(() => dashboardData.avgCallDuration.map((item) => item.agent__name), [dashboardData.avgCallDuration]);
 
-  const aiSuccessRateData = useMemo(() => dashboardData.aiSuccessRate.map((item) => item.avg_success_rate), [dashboardData.aiSuccessRate]);
+  const aiSuccessRateData = useMemo(() => dashboardData.aiSuccessRate.map((item) => item.avg_success_rate.toFixed(2)), [dashboardData.aiSuccessRate]);
   const aiSuccessRateCategories = useMemo(() => dashboardData.aiSuccessRate.map((item) => item.date), [dashboardData.aiSuccessRate]);
 
   const satisfactionScoreData = useMemo(() => dashboardData.satisfactionScore.map((item) => item.count), [dashboardData.satisfactionScore]);

@@ -230,6 +230,62 @@ class DetailedCallAnalytics(models.Model):
 
 
 
+
+class LeadGeneration(models.Model):
+    # Choices for LeadStatus
+    LEAD_STATUS_CHOICES = [
+        ('New', 'New'),
+        ('Contacted', 'Contacted'),
+        ('Qualified', 'Qualified'),
+        ('Lost', 'Lost'),
+    ]
+
+    LeadID = models.AutoField(primary_key=True)  # Unique identifier for each lead
+    FirstName = models.CharField(max_length=50)  # First name of the lead
+    LastName = models.CharField(max_length=50)   # Last name of the lead
+    Email = models.EmailField(max_length=100)    # Email address of the lead
+    PhoneNumber = models.CharField(max_length=15, blank=True, null=True)  # Phone number of the lead
+    CompanyName = models.CharField(max_length=100, blank=True, null=True)  # Company name of the lead
+    JobTitle = models.CharField(max_length=100, blank=True, null=True)     # Job title of the lead
+    LeadSource = models.CharField(max_length=100, blank=True, null=True)   # Source of the lead
+    LeadStatus = models.CharField(max_length=50, choices=LEAD_STATUS_CHOICES, default='New')  # Status of the lead
+    CreatedAt = models.DateTimeField(auto_now_add=True)  # Timestamp when the lead was created
+    UpdatedAt = models.DateTimeField(auto_now=True)      # Timestamp when the lead was last updated
+
+    def __str__(self):
+        return f"{self.FirstName} {self.LastName} ({self.Email})"
+
+class OrderConfirmation(models.Model):
+    # Choices for PaymentStatus
+    PAYMENT_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Paid', 'Paid'),
+        ('Failed', 'Failed'),
+    ]
+
+    # Choices for OrderStatus
+    ORDER_STATUS_CHOICES = [
+        ('Processing', 'Processing'),
+        ('Shipped', 'Shipped'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled'),
+    ]
+
+    OrderID = models.AutoField(primary_key=True)  # Unique identifier for each order
+    LeadID = models.ForeignKey(LeadGeneration, on_delete=models.SET_NULL, null=True)  # Foreign key to LeadGeneration
+    OrderDate = models.DateTimeField(auto_now_add=True)  # Date and time when the order was placed
+    ProductID = models.IntegerField()  # Foreign key to Product (assuming ProductID is an integer)
+    Quantity = models.IntegerField()   # Quantity of the product ordered
+    TotalAmount = models.DecimalField(max_digits=10, decimal_places=2)  # Total amount of the order
+    PaymentStatus = models.CharField(max_length=50, choices=PAYMENT_STATUS_CHOICES, default='Pending')  # Payment status
+    OrderStatus = models.CharField(max_length=50, choices=ORDER_STATUS_CHOICES, default='Processing')  # Order status
+    CreatedAt = models.DateTimeField(auto_now_add=True)  # Timestamp when the order was created
+    UpdatedAt = models.DateTimeField(auto_now=True)      # Timestamp when the order was last updated
+
+    def __str__(self):
+        return f"Order #{self.OrderID} by {self.LeadID} (Status: {self.OrderStatus})"
+
+
 class UploadedFile(models.Model):
     file = models.FileField(upload_to='uploads/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
