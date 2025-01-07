@@ -22,7 +22,7 @@ export function UserList() {
    useEffect(()=>{
     const fetchUsers = async () => {
       try{
-        const response = await axios.get('http://localhost:8000/api/agents');
+        const response = await axios.get('https://d0rgham.pythonanywhere.com/api/agents/');
         setUsers(response.data);
       }
       catch (error){
