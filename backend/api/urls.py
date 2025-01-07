@@ -6,7 +6,7 @@ from .views import (
     SatisfactionScoreDistribution, CallsHandledByAgent, TotalCallsOverTime,
     AverageWaitTimeOverTime, ServiceLevelPercentageOverTime, ConversionRateOverTime,
     InteractionTypeDistribution, CallCategoryDistribution, TranscriptLengthDistribution,
-    DashboardData, upload_file,
+    DashboardData, upload_file,TotalClientsPerMonth,
     LeadGenerationListCreateView, LeadGenerationRetrieveUpdateDestroyView,
     OrderConfirmationListCreateView, OrderConfirmationRetrieveUpdateDestroyView,
     AgentListCreateView, AgentRetrieveUpdateDestroyView,
@@ -37,6 +37,7 @@ urlpatterns = [
     path('call-category-distribution/', CallCategoryDistribution.as_view()),
     path('transcript-length-distribution/', TranscriptLengthDistribution.as_view()),
     path('dashboard-data/', DashboardData.as_view()),
+    path('clients-number-month/', TotalClientsPerMonth.as_view()),
 
     # File upload endpoint
     path('upload/', upload_file, name='upload_file'),

@@ -6,6 +6,7 @@ from .models import (
     DetailedCallAnalytics
 )
 
+
 class OrderConfirmationSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderConfirmation

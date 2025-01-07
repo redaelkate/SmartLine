@@ -4,23 +4,18 @@ from django.contrib import admin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import *
+from django.apps import apps
+from django.contrib.admin.sites import AlreadyRegistered
 
-admin.site.register(Organization)
-admin.site.register(Admin)
-admin.site.register(Agent)
-admin.site.register(Call)
-admin.site.register(CallTranscript)
-admin.site.register(CallTrends)
-admin.site.register(AgentPerformance)
-admin.site.register(CustomerSatisfaction)
-admin.site.register(AIInteractionMetrics)
-admin.site.register(CallPerformance)
-admin.site.register(DetailedCallAnalytics)
-admin.site.register(AgentInteractionLog)
-admin.site.register(ConversionAnalytics)
-admin.site.register(ServiceLevel)   
-admin.site.register(CallQueue)
-admin.site.register(UploadedFile)
+
+app = apps.get_app_config('api')
+models = app.get_models()
+
+for model in models:
+    try:
+        admin.site.register(model)
+    except AlreadyRegistered:
+        pass
 
 
 class CustomUserAdmin(UserAdmin):
