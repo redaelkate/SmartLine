@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from .models import (
-    Organization, Admin, Agent, Call, CallTranscript, CallPerformance,
+    Organization, Admin, Agent, Call, CallTranscript, CallPerformance,Client,
     AIInteractionMetrics, CustomerSatisfaction, AgentPerformance, CallTrends,
     CallQueue, ServiceLevel, ConversionAnalytics, AgentInteractionLog,LeadGeneration, OrderConfirmation,
     DetailedCallAnalytics
 )
+
 
 class OrderConfirmationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,6 +25,10 @@ class OrganizationSerializer(serializers.ModelSerializer):
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Admin
+        fields = '__all__'
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
         fields = '__all__'
 
 class AgentSerializer(serializers.ModelSerializer):

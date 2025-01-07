@@ -8,14 +8,42 @@ from .models import (
     Organization, Admin, Agent, Call, CallTranscript, CallPerformance,
     AIInteractionMetrics, CustomerSatisfaction, AgentPerformance, CallTrends,
     CallQueue, ServiceLevel, ConversionAnalytics, AgentInteractionLog,
-    DetailedCallAnalytics,UploadedFile
+    DetailedCallAnalytics,UploadedFile,Client
 )
 
+from .serializers import ( AgentSerializer,ClientSerializer, CallSerializer, LeadGenerationSerializer, OrderConfirmationSerializer)
+import csv
+import io
+from rest_framework import viewsets
 import os 
-from .models import LeadGeneration
+from .models import LeadGeneration,OrderConfirmation
 from .serializers import LeadGenerationSerializer
 from .models import OrderConfirmation
 from .serializers import OrderConfirmationSerializer
+
+
+
+
+class AgentViewSet(viewsets.ModelViewSet):
+    queryset = Agent.objects.all()
+    serializer_class = AgentSerializer
+
+class CallViewSet(viewsets.ModelViewSet):
+    queryset = Call.objects.all()
+    serializer_class = CallSerializer
+
+class ClientViewSet(viewsets.ModelViewSet):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+
+class AgentListCreateView(generics.ListCreateAPIView):
+    queryset = Agent.objects.all()
+    serializer_class = AgentSerializer
+
+class AgentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Agent.objects.all()
+    serializer_class = AgentSerializer
+
 
 # List all orders or create a new order
 class OrderConfirmationListCreateView(generics.ListCreateAPIView):
@@ -63,6 +91,12 @@ from .serializers import (
 class SubscriptionPlanDistribution(APIView):
     def get(self, request):
         data = Organization.objects.values('subscription_plan').annotate(count=Count('id'))
+        return Response(data)
+
+
+class TotalClientsPerMonth(APIView):
+    def get(self, request):
+        data = Client.objects.values('created_at').annotate(count=Count('id'))
         return Response(data)
 
 class AdminsPerOrganization(APIView):
@@ -204,3 +238,49 @@ class DashboardData(APIView):
             'call_category_distribution': call_category_data,
             'transcript_length_distribution': transcript_length_data,
         })
+    
+
+
+
+
+@csrf_exempt
+def upload_leads(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        decoded_file = file.read().decode('utf-8')
+        reader = csv.DictReader(io.StringIO(decoded_file))
+
+        for row in reader:
+            LeadGeneration.objects.create(
+                first_name=row['first_name'],
+                last_name=row['last_name'],
+                email=row['email'],
+                phone_number=row['phone_number'],
+                company_name=row['company_name'],
+                job_title=row['job_title'],
+                lead_source=row['lead_source'],
+                lead_status=row['lead_status'],
+            )
+
+        return JsonResponse({"message": "Leads uploaded successfully"}, status=201)
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+@csrf_exempt
+def upload_orders(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        decoded_file = file.read().decode('utf-8')
+        reader = csv.DictReader(io.StringIO(decoded_file))
+
+        for row in reader:
+            OrderConfirmation.objects.create(
+                lead_id=row['lead_id'],
+                product_id=row['product_id'],
+                quantity=row['quantity'],
+                total_amount=row['total_amount'],
+                payment_status=row['payment_status'],
+                order_status=row['order_status'],
+            )
+
+        return JsonResponse({"message": "Orders uploaded successfully"}, status=201)
+    return JsonResponse({"error": "Invalid request"}, status=400)
