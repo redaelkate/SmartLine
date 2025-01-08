@@ -185,25 +185,12 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - Django and React.js communities for their excellent documentation.
 - OpenAI for providing cutting-edge AI models.
 - Vercel for seamless frontend deployment.
-```
+
 
 ---
 #### **1. Key Pages**
 - **Dashboard**: Overview of AI agent performance, task completion rates, and customer satisfaction.
-- **Chat Interface**: Where customers interact with AI agents.
-- **Analytics**: Detailed reports on agent performance, customer feedback, and task metrics.
-- **Settings**: Customize AI agent behavior, workflows, and integrations.
+- **Agents**: Customize AI agent behavior, workflows, and integrations.
 
-#### **2. Tools for UI Documentation**
-- Use **Storybook** to document React components.
-- Use **Swagger** or **ReDoc** for API documentation.
-- Use **MkDocs** or **Docusaurus** to combine all documentation into a single site.
 
----
 
-### **Next Steps**
-1. Let me know if you’d like to add more details about the AI agents or specific workflows.
-2. Share screenshots or descriptions of the UI, and I can help you create detailed documentation.
-3. If you need help setting up **Storybook** or **Swagger**, let me know!
-
-This project sounds amazing, and I’m excited to help you make it even better! 🚀
