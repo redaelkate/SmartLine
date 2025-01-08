@@ -46,8 +46,7 @@ hangup_prompt = PromptTemplate(
        - Example:
          - Customer: "I don't have any other questions."
          - Decision: 'true'
-
-    if the agent asked a question offers help dont hangup
+    7. if the agent asked a question offers help dont hangup
 
     ### Conversation:
     {conversation}
