@@ -167,8 +167,8 @@ class CallCategoryDistribution(APIView):
 
 class TranscriptLengthDistribution(APIView):
     def get(self, request):
-        data = CallTranscript.objects.annotate(length=Count('transcript')).values('length').annotate(count=Count('id'))
-        return Response(data)
+        transcript_length_data =CallTranscript.objects.annotate(length=Length('transcript')).values('length').annotate(count=Count('id'))             
+        return Response(transcript_length_data)
     
 
 
@@ -220,7 +220,7 @@ class DashboardData(APIView):
         call_category_data = DetailedCallAnalytics.objects.values('call_category').annotate(count=Count('id'))
 
         # Transcript Length Distribution
-        transcript_length_data = CallTranscript.objects.annotate(length=Length('transcript')).values('length').order_by('length') 
+        transcript_length_data = CallTranscript.objects.annotate(length=Length('transcript')).values('length').annotate(count=Count('id')) 
 
         # Clients data
         clients_data = ClientSerializer(Client.objects.all(), many=True).data
@@ -268,9 +268,35 @@ class DashboardData(APIView):
 
 
 class UploadLeadsView(APIView):
+    def get(self, request):
+        leads = LeadGeneration.objects.all()
+        serializer = LeadGenerationSerializer(leads, many=True)
+        return Response(serializer.data)
+
     def post(self, request):
         if 'file' not in request.FILES:
-            return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+            if not data:
+                return Response({"error": "No file or JSON data uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            else :
+                data = request.data
+                for item in data:
+                    LeadGeneration.objects.create(
+                        FirstName=item.get('FirstName'),
+                        LastName=item.get('LastName'),
+                        Email=item.get('Email'),
+                        PhoneNumber=item.get('PhoneNumber'),
+                        CompanyName=item.get('CompanyName'),
+                        JobTitle=item.get('JobTitle'),
+                        LeadSource=item.get('LeadSource'),
+                        LeadStatus=item.get('LeadStatus'),
+                        Summary=item.get('Summary'),
+                        Rate=item.get('Rate')
+                    )
+                return Response({"message": "Leads uploaded successfully"}, status=status.HTTP_201_CREATED)
+            
+            
+           
 
         file = request.FILES['file']
 
@@ -294,7 +320,7 @@ class UploadLeadsView(APIView):
             # Validate required columns
             required_columns = [
                 'first_name', 'last_name', 'email', 'phone_number',
-                'company_name', 'job_title', 'lead_source', 'lead_status'
+                'company_name', 'job_title', 'lead_source', 'lead_status','Summary','Rate'
             ]
             if not all(column in reader.fieldnames for column in required_columns):
                 return Response({"error": "CSV file is missing required columns"}, status=status.HTTP_400_BAD_REQUEST)
@@ -344,8 +370,8 @@ class UploadOrdersView(APIView):
 
             # Validate required columns
             required_columns = [
-                'lead_id', 'product_id', 'quantity', 'total_amount',
-                'payment_status', 'order_status'
+                'LeadID', 'ProductID', 'Quantity', 'TotalAmount',
+                'PaymentStatus', 'OrderStatus'
             ]
             if not all(column in reader.fieldnames for column in required_columns):
                 return Response({"error": "CSV file is missing required columns"}, status=status.HTTP_400_BAD_REQUEST)

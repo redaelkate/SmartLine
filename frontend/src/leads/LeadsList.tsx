@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { User } from 'lucide-react';
 import axios from 'axios';
-import {SidebarClose,XCircle} from 'lucide-react';
+import { XCircle } from 'lucide-react';
 import Modal from '../components/Modal';
+import { toast } from 'react-toastify';
 
 interface Lead {
   LeadID: number;
@@ -20,8 +21,8 @@ const LeadsList = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null); // Track selected lead
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Track modal state
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchLeads = async () => {
@@ -30,6 +31,7 @@ const LeadsList = () => {
         setLeads(response.data);
       } catch (err) {
         setError('Failed to fetch leads');
+        toast.error('Failed to fetch leads');
         console.error(err);
       } finally {
         setLoading(false);
@@ -48,8 +50,8 @@ const LeadsList = () => {
   }
 
   const handleDisplayLead = (lead: Lead) => {
-    setSelectedLead(lead); // Set the selected lead
-    setIsModalOpen(true); // Open the modal
+    setSelectedLead(lead);
+    setIsModalOpen(true);
   };
 
   return (
@@ -68,11 +70,7 @@ const LeadsList = () => {
               </div>
             </div>
             <div className="text-right">
-              <p
-                className={`text-sm font-medium ${
-                  lead.LeadStatus === 'New' ? 'text-red-500' : 'text-yellow-500'
-                }`}
-              >
+              <p className={`text-sm font-medium ${lead.LeadStatus === 'New' ? 'text-red-500' : 'text-yellow-500'}`}>
                 {lead.LeadStatus}
               </p>
               <p className="text-sm text-gray-500">{lead.CompanyName}</p>
@@ -81,11 +79,13 @@ const LeadsList = () => {
         ))}
       </div>
 
-        {/* Modal for displaying lead details */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {selectedLead && (
           <div>
-            <div className='flex justify-between'><h3 className="text-xl font-semibold mb-4">Lead Details</h3><XCircle className='cursor-pointer'  onClick={()=>{setIsModalOpen(false)}}/></div>
+            <div className="flex justify-between">
+              <h3 className="text-xl font-semibold mb-4">Lead Details</h3>
+              <XCircle className="cursor-pointer" onClick={() => setIsModalOpen(false)} />
+            </div>
             <div className="space-y-2">
               <p><strong>Name:</strong> {selectedLead.FirstName} {selectedLead.LastName}</p>
               <p><strong>Email:</strong> {selectedLead.Email}</p>
@@ -98,7 +98,6 @@ const LeadsList = () => {
           </div>
         )}
       </Modal>
-
     </div>
   );
 };

@@ -1,17 +1,16 @@
 import { BarChart3, Users, DollarSign } from "lucide-react";
-import { lazy, Suspense, useEffect, useState, useMemo } from "react"; // Use React's lazy and Suspense
+import { lazy, Suspense, useEffect, useState, useMemo } from "react";
 import { StatsCard } from "../components/StatsCard";
 import { QuickActions } from "../components/dashboard/QuickActions";
 import "./Dashboard.css";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 
-// Lazy load the Chart component
-const Chart = lazy(() => import("react-apexcharts"));
+// Lazy load the CustomChart component
+const CustomChart = lazy(() => import("../components/CustomChart"));
 
 export const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
-    
     agentStatus: [],
     callType: [],
     avgCallDuration: [],
@@ -36,7 +35,6 @@ export const Dashboard = () => {
       try {
         const response = await axios.get("https://d0rgham.pythonanywhere.com/api/dashboard-data/");
         setDashboardData({
-          
           agentStatus: response.data.agent_status_distribution || [],
           callType: response.data.call_type_distribution || [],
           avgCallDuration: response.data.average_call_duration || [],
@@ -65,8 +63,6 @@ export const Dashboard = () => {
   const [total_users, setTotalUsers] = useState(0);
 
   // Memoize data transformations
-  
-
   const agentStatusData = useMemo(() => dashboardData.agentStatus.map((item) => item.count), [dashboardData.agentStatus]);
   const agentStatusLabels = useMemo(() => dashboardData.agentStatus.map((item) => item.status), [dashboardData.agentStatus]);
 
@@ -106,6 +102,31 @@ export const Dashboard = () => {
   const transcriptLengthData = useMemo(() => dashboardData.transcriptLength.map((item) => item.count), [dashboardData.transcriptLength]);
   const transcriptLengthCategories = useMemo(() => dashboardData.transcriptLength.map((item) => item.length), [dashboardData.transcriptLength]);
 
+  // Define a vibrant and accessible color palette
+  const chartColors = [
+    "#FF6384", // Pink
+    "#36A2EB", // Blue
+    "#FFCE56", // Yellow
+    "#4BC0C0", // Teal
+    "#9966FF", // Purple
+    "#FF9F40", // Orange
+    "#C9CBCF", // Gray
+  ];
+
+  // Chart options with attractive colors
+  const chartOptions = {
+    chart: {
+      toolbar: { show: false },
+      animations: { enabled: true, easing: "easeinout", speed: 800 },
+    },
+    colors: chartColors, // Use the vibrant color palette
+    dataLabels: { enabled: false },
+    tooltip: { enabled: true, theme: "dark" },
+    xaxis: { labels: { style: { colors: "#6B7280" } } },
+    yaxis: { labels: { style: { colors: "#6B7280" } } },
+    grid: { borderColor: "#E5E7EB" },
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -126,13 +147,14 @@ export const Dashboard = () => {
 
   return (
     <div id="webcrumbs" className="w-full h-full p-4">
-      <div className="bg-white rounded-lg shadow w-full h-full p-10">
+      <div className="bg-white rounded-lg shadow w-full h-full p-4 md:p-6 lg:p-10">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 font-title">Dashboard Overview</h1>
-          <p className="text-gray-600 mt-1">Welcome back, Admin</p>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900 font-title">Dashboard Overview</h1>
+          <p className="text-gray-600 mt-1 text-sm md:text-base">Welcome back, Admin</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           <StatsCard title="Total Users" value={total_users.toString()} icon={Users} trend={12} />
           <StatsCard title="Monthly Revenue" value="$54,321" icon={DollarSign} trend={8} />
           <StatsCard title="Active Sessions" value="2,456" icon={BarChart3} trend={-3} />
@@ -140,19 +162,18 @@ export const Dashboard = () => {
 
         <QuickActions />
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-          
-
+        {/* Charts */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Agent Status Distribution */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="donut"
               series={agentStatusData}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 labels: agentStatusLabels,
-                title: { text: "Agent Status Distribution" },
+                title: { text: "Agent Status Distribution", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#36A2EB", "#FF6384", "#FFCE56"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -161,13 +182,14 @@ export const Dashboard = () => {
 
           {/* Call Type Distribution */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="bar"
               series={[{ data: callTypeData }]}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 xaxis: { categories: callTypeCategories },
-                title: { text: "Call Type Distribution" },
+                title: { text: "Call Type Distribution", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#4BC0C0", "#9966FF", "#FF9F40"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -175,29 +197,34 @@ export const Dashboard = () => {
           </Suspense>
 
           {/* Average Call Duration by Agent */}
-          <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
-              type="bar"
-              series={[{ data: avgCallDurationData }]}
-              options={{
-                chart: { toolbar: { show: false } },
-                xaxis: { categories: avgCallDurationCategories },
-                title: { text: "Average Call Duration by Agent" },
-              }}
-              width="100%"
-              height="300px"
-            />
-          </Suspense>
+          <div className="row-span-1 sm:row-span-2 lg:row-span-2 h-full">
+            <Suspense fallback={<div>Loading Chart...</div>}>
+              <CustomChart
+                type="bar"
+                series={[{ data: avgCallDurationData }]}
+                options={{
+                  ...chartOptions,
+                  plotOptions: { bar: { horizontal: true } },
+                  xaxis: { categories: avgCallDurationCategories },
+                  title: { text: "Average Call Duration by Agent", style: { fontSize: "16px", color: "#374151" } },
+                  colors: ["#36A2EB", "#FF6384", "#FFCE56"], // Custom colors for this chart
+                }}
+                width="100%"
+                height="100%"
+              />
+            </Suspense>
+          </div>
 
           {/* AI Success Rate Over Time */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="line"
               series={[{ name: "AI Success Rate", data: aiSuccessRateData }]}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 xaxis: { categories: aiSuccessRateCategories },
-                title: { text: "AI Success Rate Over Time" },
+                title: { text: "AI Success Rate Over Time", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#FF6384"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -206,13 +233,14 @@ export const Dashboard = () => {
 
           {/* Satisfaction Score Distribution */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="bar"
               series={[{ data: satisfactionScoreData }]}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 xaxis: { categories: satisfactionScoreCategories },
-                title: { text: "Satisfaction Score Distribution" },
+                title: { text: "Satisfaction Score Distribution", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#4BC0C0", "#9966FF", "#FF9F40"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -220,29 +248,33 @@ export const Dashboard = () => {
           </Suspense>
 
           {/* Calls Handled by Agent */}
-          <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
-              type="bar"
-              series={[{ data: callsHandledByAgentData }]}
-              options={{
-                chart: { toolbar: { show: false } },
-                xaxis: { categories: callsHandledByAgentCategories },
-                title: { text: "Calls Handled by Agent" },
-              }}
-              width="100%"
-              height="300px"
-            />
-          </Suspense>
+          <div className="col-span-1 sm:col-span-2 lg:col-span-2">
+            <Suspense fallback={<div>Loading Chart...</div>}>
+              <CustomChart
+                type="bar"
+                series={[{ data: callsHandledByAgentData }]}
+                options={{
+                  ...chartOptions,
+                  xaxis: { categories: callsHandledByAgentCategories },
+                  title: { text: "Calls Handled by Agent", style: { fontSize: "16px", color: "#374151" } },
+                  colors: ["#36A2EB", "#FF6384", "#FFCE56"], // Custom colors for this chart
+                }}
+                width="100%"
+                height="300px"
+              />
+            </Suspense>
+          </div>
 
           {/* Total Calls Over Time */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="line"
               series={[{ name: "Total Calls", data: totalCallsOverTimeData }]}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 xaxis: { categories: totalCallsOverTimeCategories },
-                title: { text: "Total Calls Over Time" },
+                title: { text: "Total Calls Over Time", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#9966FF"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -251,13 +283,14 @@ export const Dashboard = () => {
 
           {/* Average Wait Time Over Time */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="line"
               series={[{ name: "Average Wait Time", data: avgWaitTimeData }]}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 xaxis: { categories: avgWaitTimeCategories },
-                title: { text: "Average Wait Time Over Time" },
+                title: { text: "Average Wait Time Over Time", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#FF9F40"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -266,13 +299,14 @@ export const Dashboard = () => {
 
           {/* Service Level Percentage Over Time */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="line"
               series={[{ name: "Service Level Percentage", data: serviceLevelPercentageData }]}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 xaxis: { categories: serviceLevelPercentageCategories },
-                title: { text: "Service Level Percentage Over Time" },
+                title: { text: "Service Level Percentage Over Time", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#4BC0C0"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -281,13 +315,14 @@ export const Dashboard = () => {
 
           {/* Conversion Rate Over Time */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="line"
               series={[{ name: "Conversion Rate", data: conversionRateData }]}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 xaxis: { categories: conversionRateCategories },
-                title: { text: "Conversion Rate Over Time" },
+                title: { text: "Conversion Rate Over Time", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#FF6384"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -296,13 +331,14 @@ export const Dashboard = () => {
 
           {/* Interaction Type Distribution */}
           <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
+            <CustomChart
               type="bar"
               series={[{ data: interactionTypeData }]}
               options={{
-                chart: { toolbar: { show: false } },
+                ...chartOptions,
                 xaxis: { categories: interactionTypeCategories },
-                title: { text: "Interaction Type Distribution" },
+                title: { text: "Interaction Type Distribution", style: { fontSize: "16px", color: "#374151" } },
+                colors: ["#36A2EB", "#FF6384", "#FFCE56"], // Custom colors for this chart
               }}
               width="100%"
               height="300px"
@@ -310,36 +346,39 @@ export const Dashboard = () => {
           </Suspense>
 
           {/* Call Category Distribution */}
-          <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
-              type="bar"
-              series={[{ data: callCategoryData }]}
-              options={{
-                chart: { toolbar: { show: false } },
-                xaxis: { categories: callCategoryCategories },
-                title: { text: "Call Category Distribution" },
-              }}
-              width="100%"
-              height="300px"
-            />
-          </Suspense>
+          <div className="col-span-1 sm:col-span-2 lg:col-span-2">
+            <Suspense fallback={<div>Loading Chart...</div>}>
+              <CustomChart
+                type="bar"
+                series={[{ data: callCategoryData }]}
+                options={{
+                  ...chartOptions,
+                  xaxis: { categories: callCategoryCategories },
+                  title: { text: "Call Category Distribution", style: { fontSize: "16px", color: "#374151" } },
+                  colors: ["#4BC0C0", "#9966FF", "#FF9F40"], // Custom colors for this chart
+                }}
+                width="100%"
+                height="300px"
+              />
+            </Suspense>
+          </div>
 
           {/* Transcript Length Distribution */}
-          <div className="col-span-3">
-          <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
-              type="bar"
-              series={[{ data: transcriptLengthData }]}
-              options={{
-                chart: { toolbar: { show: false } },
-                xaxis: { categories: transcriptLengthCategories },
-                title: { text: "Transcript Length Distribution" },
-              }}
-              width="100%"
-              height="300px"
-              
-            />
-          </Suspense>
+          <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+            <Suspense fallback={<div>Loading Chart...</div>}>
+              <CustomChart
+                type="bar"
+                series={[{ data: transcriptLengthData }]}
+                options={{
+                  ...chartOptions,
+                  xaxis: { categories: transcriptLengthCategories },
+                  title: { text: "Transcript Length Distribution", style: { fontSize: "16px", color: "#374151" } },
+                  colors: ["#36A2EB", "#FF6384", "#FFCE56"], // Custom colors for this chart
+                }}
+                width="100%"
+                height="300px"
+              />
+            </Suspense>
           </div>
         </div>
       </div>

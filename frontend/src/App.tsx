@@ -8,7 +8,7 @@ import { mockCallHistory } from './data/mockCallHistory';
 import AIAgentManager from './pages/settings';
 import LeadsView from './leads/LeadsView';
 import OrdersView from './orders/OrdersView';
-
+import LeadGenerationPage from './leads/leadgeneration';
 
 function App() {
   const [currentPage, setCurrentPage] = React.useState('dashboard');
@@ -27,6 +27,8 @@ function App() {
         return <LeadsView />
       case 'settings':
         return <AIAgentManager />;
+      case 'leadgeneration':
+        return <LeadGenerationPage />;
       default:
         return <Dashboard />;
     }
@@ -35,7 +37,7 @@ function App() {
   return (
     <div className="flex bg-gray-50">
       <Sidebar onNavigate={setCurrentPage} />
-      <main className="flex-1 overflow-y-auto m-8">
+      <main className="flex-1 overflow-y-auto ">
         {renderPage()}
       </main>
     </div>

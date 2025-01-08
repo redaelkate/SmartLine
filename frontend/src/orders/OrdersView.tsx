@@ -14,7 +14,8 @@ const OrdersView = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to upload orders file');
+        const errorData = await response.json(); // Parse error response from backend
+        throw new Error(errorData.error || 'Failed to upload orders file');
       }
 
       const result = await response.json();
@@ -22,7 +23,7 @@ const OrdersView = () => {
       alert('Orders file uploaded successfully!');
     } catch (error) {
       console.error('Error uploading orders file:', error);
-      alert('Failed to upload orders file. Please try again.');
+      alert(error.message || 'Failed to upload orders file. Please try again.');
     }
   };
 
@@ -33,7 +34,7 @@ const OrdersView = () => {
         <FileUpload
           accept=".csv,.xlsx,.xls"
           label="Upload orders file (CSV or Excel)"
-          onUpload={handleFileUpload}
+          onUpload={handleFileUpload} // Pass the upload function as a prop
         />
       </div>
       <OrdersList />
