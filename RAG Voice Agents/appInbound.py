@@ -6,57 +6,76 @@ import asyncio
 import json
 import traceback
 from dotenv import load_dotenv
-from fastapi import FastAPI, APIRouter, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from helpers.twilio import twilio_stream
 from helpers.voice_system_prompt import SYSTEM_MESSAGE
-from services.openai_functions import welcome_message, send_session_update, generate_audio_response
+from services.openai_functions import welcome_message, send_session_update, generate_audio_response,generate_summary
 from tools.execute_tool import execute_tool
+from twilio.twiml.voice_response import VoiceResponse
+from fastapi.responses import Response
+from twilio.rest import Client
+from services.openai_functions import should_hangup
 
-# Load environment variables from a .env file
-load_dotenv()
 
-# Get the PORT value from environment variables, defaulting to 5000 if not found
-PORT = int(os.getenv("PORT", 5050))
+
+
 
 app = FastAPI()
+load_dotenv()
 
-router = APIRouter()
+PORT = int(os.getenv("PORT", 5050))
 
-# Environment variables
+
 VOICE = os.getenv("VOICE")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+DOMAIN = os.getenv("DOMAIN")   
 
-@router.api_route("/stream/incoming-call", methods=["GET", "POST"])
+call_sid=None
+transcript = []
+@app.api_route("/stream/incoming-call", methods=["GET", "POST"])
 async def handle_incoming_call(request: Request):
+    global call_sid
     logging.info("Stream Incoming call received.")
+
+    data = await request.form()
+    call_sid = data.get('CallSid')
+    
+    if call_sid:
+        logging.info(f"Received Call SID: {call_sid}")
+    else:
+        logging.error("Call SID not found in the request.")
+
     return twilio_stream()
 
-@router.websocket("/stream/websocket")
+
+
+
+@app.websocket("/stream/websocket")
 async def handle_media_stream(websocket: WebSocket):
     logging.info("Stream WebSocket connection established.")
     await websocket.accept()
 
     async with aiohttp.ClientSession() as session:
         async with session.ws_connect(
-            'wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01',
+            'wss://api.openai.com/v1/realtime?model=gpt-4o-mini-realtime-preview-2024-12-17',
             headers={
                 "Authorization": f"Bearer {OPENAI_API_KEY}",
                 "OpenAI-Beta": "realtime=v1"
             }
         ) as openai_ws:
 
-            # Define state variables in the enclosing scope
             stream_sid = None
             latest_media_timestamp = 0
             response_start_timestamp_twilio = None
-            current_item_id = None  # Moved into the enclosing scope
+            current_item_id = None  
             mark_queue = []
 
             async def receive_from_twilio():
                 nonlocal stream_sid, latest_media_timestamp
                 try:
                     async for message in websocket.iter_text():
-                        data = json.loads(message)
+                        data = json.loads(message) #doesnt contains call sid
+
                         if data['event'] == 'media' and not openai_ws.closed:
                             latest_media_timestamp = int(data['media']['timestamp'])
                             audio_append = {
@@ -77,6 +96,17 @@ async def handle_media_stream(websocket: WebSocket):
                     if not openai_ws.closed:
                         await openai_ws.close()
 
+                    summary = await generate_summary(transcript)
+                    print(f"""
+                    ########################################
+                    {summary}
+                    ########################################
+                    """)
+                    if summary:
+                        logging.info(f"Conversation Summary:\n{summary}")
+                    else:
+                        logging.error("Failed to generate summary.")
+
             async def send_to_twilio():
                 nonlocal stream_sid, current_item_id, response_start_timestamp_twilio, latest_media_timestamp
                 try:
@@ -85,15 +115,31 @@ async def handle_media_stream(websocket: WebSocket):
 
                         if response['type'] == 'session.created':
                             logging.info(f"OpenAI WSS connection established. => {stream_sid}")
-                            await send_session_update(openai_ws, VOICE, SYSTEM_MESSAGE)
+                            await send_session_update(openai_ws, VOICE, SYSTEM_MESSAGE["inbound"])
 
                         if response['type'] == 'session.updated': 
                             logging.info(f"OpenAI WSS connection updated. => {stream_sid}: {response}")                       
-                            await welcome_message(openai_ws)                            
+                            await welcome_message(openai_ws)  
+
+                        if response['type'] == 'response.done':
+                            try:
+                                # Try to access the transcript
+                                mess = response["response"]["output"][0]["content"][0]["transcript"]
+                                transcript.append({"role": "agent", "message": mess})  # Add agent transcript
+                            except (KeyError, IndexError):
+                                # Do nothing if the structure is invalid
+                                pass
+                                 
+                        if response['type'] == 'conversation.item.input_audio_transcription.completed':
+                            man = response["transcript"]
+                            transcript.append({"role": "client", "message": man})  # Add client transcript
+                            print(transcript)                          
 
                         if response['type'] == 'response.function_call_arguments.done':
                             logging.debug(f"Function call arguments received. => {stream_sid}: {response}")
                             result = await execute_tool(response)
+
+
                             await generate_audio_response(stream_sid, openai_ws, result['result'])
 
                         if response['type'] == 'response.audio.delta' and response.get('delta'):
@@ -105,20 +151,47 @@ async def handle_media_stream(websocket: WebSocket):
                                 }
                             }
                             await websocket.send_json(audio_delta)
-
+                            
                             if response_start_timestamp_twilio is None:
                                 response_start_timestamp_twilio = latest_media_timestamp
                                 logging.info(f"Setting start timestamp for new response: {response_start_timestamp_twilio}ms")
-
+                            
                             if response.get('item_id'):
                                 current_item_id = response['item_id']
 
                             await send_mark(websocket, stream_sid)
 
+                            hangup= await should_hangup(str(transcript))
+                            if hangup:
+                                summary = await generate_summary(transcript)
+
+
+                                print(f"""
+                                    ########################################
+                                    {summary}
+                                    ########################################
+                                    """)
+                                
+                                await generate_audio_response(stream_sid, openai_ws, "Goodbye, ending the call.")
+
+
+
+                                logging.info(f"Hang up on call: {stream_sid}")
+
+                                account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+                                auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+
+                                client = Client(account_sid, auth_token)
+                                call = client.calls(call_sid).update(status='completed')
+
+                                print(f"Call {call.sid} has been terminated.")
+                                return 
+
                         # Handle interruptions when user starts speaking
                         if response.get('type') == 'input_audio_buffer.speech_started':
                             logging.info("User started speaking. Interrupting bot's response.")
                             await handle_interruption(openai_ws, stream_sid)
+
 
                 except Exception as e:
                     logging.error(f"Error in send_to_twilio: {stream_sid} {e} - {traceback.format_exc()}")
@@ -161,7 +234,6 @@ async def handle_media_stream(websocket: WebSocket):
 
             await asyncio.gather(receive_from_twilio(), send_to_twilio())
 
-app.include_router(router)
 
 if __name__ == "__main__":
     try:
