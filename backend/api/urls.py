@@ -6,11 +6,11 @@ from .views import (
     SatisfactionScoreDistribution, CallsHandledByAgent, TotalCallsOverTime,
     AverageWaitTimeOverTime, ServiceLevelPercentageOverTime, ConversionRateOverTime,
     InteractionTypeDistribution, CallCategoryDistribution, TranscriptLengthDistribution,
-    DashboardData, upload_file,TotalClientsPerMonth,
+    DashboardData, upload_file, TotalClientsPerMonth,
     LeadGenerationListCreateView, LeadGenerationRetrieveUpdateDestroyView,
     OrderConfirmationListCreateView, OrderConfirmationRetrieveUpdateDestroyView,
     AgentListCreateView, AgentRetrieveUpdateDestroyView,
-    ClientViewSet, CallViewSet, AgentViewSet, upload_leads, upload_orders
+    ClientViewSet, CallViewSet, AgentViewSet, UploadLeadsView, UploadOrdersView
 )
 
 # Create a router and register the viewsets
@@ -41,8 +41,8 @@ urlpatterns = [
 
     # File upload endpoint
     path('upload/', upload_file, name='upload_file'),
-    path('upload/leads/', upload_leads, name='upload-leads'),
-    path('upload/orders/', upload_orders, name='upload-orders'),
+    path('upload/leads/', UploadLeadsView.as_view(), name='upload-leads'),
+    path('upload/orders/', UploadOrdersView.as_view(), name='upload-orders'),
 
     # Lead generation endpoints
     path('leads/', LeadGenerationListCreateView.as_view(), name='lead-list-create'),

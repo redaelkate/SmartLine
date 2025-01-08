@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Edit, Trash2 } from 'lucide-react'; // Lucide icons
+import {XCircle, Edit, Trash2 } from 'lucide-react'; // Lucide icons
 
 const AIAgentForm = ({ agent, onSubmit, onCancel }) => {
   const [name, setName] = useState(agent ? agent.name : '');
@@ -204,7 +204,7 @@ const AIAgentManager = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">AI Agent Manager</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">AI Agent Manager </h1>
       <button
         onClick={() => {
           setEditingAgent(null);
@@ -225,9 +225,9 @@ const AIAgentManager = () => {
       {openDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-4">
+           <div className='flex justify-between'> <h2 className="text-lg font-semibold mb-4">
               {editingAgent ? 'Edit AI Agent' : 'Create AI Agent'}
-            </h2>
+            </h2> <XCircle className='cursor-pointer' onClick={()=>{setOpenDialog(false)}} /></div>
             <AIAgentForm
               agent={editingAgent}
               onSubmit={handleCreateOrUpdateAgent}

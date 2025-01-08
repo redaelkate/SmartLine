@@ -1,7 +1,8 @@
 from django.db.models import Count, Avg
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.views import APIView
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import (
@@ -243,44 +244,101 @@ class DashboardData(APIView):
 
 
 
-@csrf_exempt
-def upload_leads(request):
-    if request.method == 'POST' and request.FILES.get('file'):
+class UploadLeadsView(APIView):
+    def post(self, request):
+        if 'file' not in request.FILES:
+            return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+
         file = request.FILES['file']
-        decoded_file = file.read().decode('utf-8')
-        reader = csv.DictReader(io.StringIO(decoded_file))
 
-        for row in reader:
-            LeadGeneration.objects.create(
-                first_name=row['first_name'],
-                last_name=row['last_name'],
-                email=row['email'],
-                phone_number=row['phone_number'],
-                company_name=row['company_name'],
-                job_title=row['job_title'],
-                lead_source=row['lead_source'],
-                lead_status=row['lead_status'],
-            )
+        try:
+            # Save the uploaded file to the media directory
+            upload_dir = os.path.join(settings.MEDIA_ROOT, 'leads')  # Directory to save files
+            os.makedirs(upload_dir, exist_ok=True)  # Create directory if it doesn't exist
+            file_path = os.path.join(upload_dir, file.name)  # Full path to save the file
 
-        return JsonResponse({"message": "Leads uploaded successfully"}, status=201)
-    return JsonResponse({"error": "Invalid request"}, status=400)
+            with open(file_path, 'wb+') as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
 
-@csrf_exempt
-def upload_orders(request):
-    if request.method == 'POST' and request.FILES.get('file'):
+            # Read the saved file from disk
+            with open(file_path, 'r') as saved_file:
+                decoded_file = saved_file.read()
+
+            # Parse the CSV file
+            reader = csv.DictReader(io.StringIO(decoded_file))
+
+            # Validate required columns
+            required_columns = [
+                'first_name', 'last_name', 'email', 'phone_number',
+                'company_name', 'job_title', 'lead_source', 'lead_status'
+            ]
+            if not all(column in reader.fieldnames for column in required_columns):
+                return Response({"error": "CSV file is missing required columns"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Process the CSV data
+            for row in reader:
+                LeadGeneration.objects.create(
+                    first_name=row['first_name'],
+                    last_name=row['last_name'],
+                    email=row['email'],
+                    phone_number=row['phone_number'],
+                    company_name=row['company_name'],
+                    job_title=row['job_title'],
+                    lead_source=row['lead_source'],
+                    lead_status=row['lead_status'],
+                )
+
+            return Response({"message": "Leads uploaded successfully"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": f"Error processing file: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UploadOrdersView(APIView):
+    def post(self, request):
+        if 'file' not in request.FILES:
+            return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
+
         file = request.FILES['file']
-        decoded_file = file.read().decode('utf-8')
-        reader = csv.DictReader(io.StringIO(decoded_file))
 
-        for row in reader:
-            OrderConfirmation.objects.create(
-                lead_id=row['lead_id'],
-                product_id=row['product_id'],
-                quantity=row['quantity'],
-                total_amount=row['total_amount'],
-                payment_status=row['payment_status'],
-                order_status=row['order_status'],
-            )
+        try:
+            # Save the uploaded file to the media directory
+            upload_dir = os.path.join(settings.MEDIA_ROOT, 'orders')  # Directory to save files
+            os.makedirs(upload_dir, exist_ok=True)  # Create directory if it doesn't exist
+            file_path = os.path.join(upload_dir, file.name)  # Full path to save the file
 
-        return JsonResponse({"message": "Orders uploaded successfully"}, status=201)
-    return JsonResponse({"error": "Invalid request"}, status=400)
+            with open(file_path, 'wb+') as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+
+            # Read the saved file from disk
+            with open(file_path, 'r') as saved_file:
+                decoded_file = saved_file.read()
+
+            # Parse the CSV file
+            reader = csv.DictReader(io.StringIO(decoded_file))
+
+            # Validate required columns
+            required_columns = [
+                'lead_id', 'product_id', 'quantity', 'total_amount',
+                'payment_status', 'order_status'
+            ]
+            if not all(column in reader.fieldnames for column in required_columns):
+                return Response({"error": "CSV file is missing required columns"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Process the CSV data
+            for row in reader:
+                OrderConfirmation.objects.create(
+                    lead_id=row['lead_id'],
+                    product_id=row['product_id'],
+                    quantity=row['quantity'],
+                    total_amount=row['total_amount'],
+                    payment_status=row['payment_status'],
+                    order_status=row['order_status'],
+                )
+
+            return Response({"message": "Orders uploaded successfully"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": f"Error processing file: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
