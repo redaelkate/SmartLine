@@ -19,7 +19,6 @@ from services.openai_functions import should_hangup
 
 
 
-
 app = FastAPI()
 load_dotenv()
 
@@ -49,6 +48,38 @@ async def handle_incoming_call(request: Request):
 
 
 
+
+async def handle_hangup(transcript, stream_sid, openai_ws, call_sid):
+    try:
+        summary = await generate_summary(transcript)
+        print(f"""
+            ########################################
+            {summary}
+            ########################################
+        """)
+        
+        await generate_audio_response(stream_sid, openai_ws, "Goodbye, ending the call.")
+        
+        logging.info(f"Hang up on call: {stream_sid}")
+        
+        account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+        auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+        client = Client(account_sid, auth_token)
+        call = client.calls(call_sid).update(status='completed')
+        
+        print(f"Call {call.sid} has been terminated.")
+    except Exception as e:
+        logging.error(f"Error during hangup process: {e}")
+
+async def check_and_handle_hangup(transcript, stream_sid, openai_ws, call_sid):
+    try:
+        hangup = await should_hangup(str(transcript))
+        if hangup:
+            logging.info("Hangup detected. Waiting for 2 seconds before proceeding.")
+            await asyncio.sleep(2)
+            await handle_hangup(transcript, stream_sid, openai_ws, call_sid)
+    except Exception as e:
+        logging.error(f"Error in hangup check: {e}")
 
 @app.websocket("/stream/websocket")
 async def handle_media_stream(websocket: WebSocket):
@@ -91,6 +122,7 @@ async def handle_media_stream(websocket: WebSocket):
                         elif data['event'] == 'mark':
                             if mark_queue:
                                 mark_queue.pop(0)
+                                
                 except WebSocketDisconnect:
                     logging.info("Client disconnected.")
                     if not openai_ws.closed:
@@ -106,6 +138,9 @@ async def handle_media_stream(websocket: WebSocket):
                         logging.info(f"Conversation Summary:\n{summary}")
                     else:
                         logging.error("Failed to generate summary.")
+
+                except Exception as e:
+                    logging.error(f"Unexpected disconnect MOUAD: {e}")
 
             async def send_to_twilio():
                 nonlocal stream_sid, current_item_id, response_start_timestamp_twilio, latest_media_timestamp
@@ -126,6 +161,9 @@ async def handle_media_stream(websocket: WebSocket):
                                 # Try to access the transcript
                                 mess = response["response"]["output"][0]["content"][0]["transcript"]
                                 transcript.append({"role": "agent", "message": mess})  # Add agent transcript
+
+                                await check_and_handle_hangup(transcript, stream_sid, openai_ws, call_sid)
+
                             except (KeyError, IndexError):
                                 # Do nothing if the structure is invalid
                                 pass
@@ -133,7 +171,7 @@ async def handle_media_stream(websocket: WebSocket):
                         if response['type'] == 'conversation.item.input_audio_transcription.completed':
                             man = response["transcript"]
                             transcript.append({"role": "client", "message": man})  # Add client transcript
-                            print(transcript)                          
+                            
 
                         if response['type'] == 'response.function_call_arguments.done':
                             logging.debug(f"Function call arguments received. => {stream_sid}: {response}")
@@ -161,31 +199,6 @@ async def handle_media_stream(websocket: WebSocket):
 
                             await send_mark(websocket, stream_sid)
 
-                            hangup= await should_hangup(str(transcript))
-                            if hangup:
-                                summary = await generate_summary(transcript)
-
-
-                                print(f"""
-                                    ########################################
-                                    {summary}
-                                    ########################################
-                                    """)
-                                
-                                await generate_audio_response(stream_sid, openai_ws, "Goodbye, ending the call.")
-
-
-
-                                logging.info(f"Hang up on call: {stream_sid}")
-
-                                account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-                                auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-
-                                client = Client(account_sid, auth_token)
-                                call = client.calls(call_sid).update(status='completed')
-
-                                print(f"Call {call.sid} has been terminated.")
-                                return 
 
                         # Handle interruptions when user starts speaking
                         if response.get('type') == 'input_audio_buffer.speech_started':
@@ -233,6 +246,7 @@ async def handle_media_stream(websocket: WebSocket):
                     mark_queue.append('responsePart')
 
             await asyncio.gather(receive_from_twilio(), send_to_twilio())
+
 
 
 if __name__ == "__main__":
