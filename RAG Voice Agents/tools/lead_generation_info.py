@@ -4,6 +4,11 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 import os
+from dotenv import load_dotenv
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+load_dotenv()
 
 llm = ChatOpenAI(model="gpt-4o-mini-2024-07-18", temperature=0)
 
@@ -50,7 +55,7 @@ summarize_chain = LLMChain(llm=llm, prompt=summarize_prompt)
 
 evaluate_chain = LLMChain(llm=llm, prompt=evaluate_prompt)
 
-def process_conversation(conversation):
+def process_lead_conversation(conversation):
 
     name_phone = extract_chain.run(conversation)
     
@@ -71,13 +76,33 @@ def process_conversation(conversation):
     else:
         name = ""
         phone = ""
-    
-    return {
+    lead_info={
         "name": name,
         "phone": phone,
         "summary": summary,
         "lead_score": lead_score
     }
+
+
+    upload_row_to_google_sheet(lead_info["name"], lead_info["phone"],lead_info.get("time","unknown"),lead_info.get("time duration","unknown"), lead_info["summary"], lead_info["lead_score"])
+
+    
+    return lead_info
+
+
+
+def upload_row_to_google_sheet(name, phone, summary, lead_score):
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+
+    creds = ServiceAccountCredentials.from_json_keyfile_name(r'C:\Users\MOUAD\Desktop\projects\AI call center\RAG Voice Agents\RAG Voice Agents\credentialsH.json', scope)
+
+    client = gspread.authorize(creds)
+
+    sheet = client.open_by_url('https://docs.google.com/spreadsheets/d/1KYMO1sZTjbrtIvtBjEpKwA5k20zMHkEoYft_Z9NYMJM/edit?usp=sharing')
+
+    worksheet = sheet.get_worksheet(0)
+
+    worksheet.append_row([name, phone, summary, lead_score])
 
 
 
@@ -90,5 +115,3 @@ Agent: What are you looking for in our product?
 Customer: I need something affordable and reliable.
 """
 
-result = process_conversation(conversation)
-print(result)
