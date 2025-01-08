@@ -5,8 +5,12 @@ import {
   Settings, 
   BarChart3, 
   CreditCard,
+  ShoppingCart,
+  Package,
   History,
   Bell,
+  Bot,
+  Contact2,
   LogOut
 } from 'lucide-react';
 
@@ -16,10 +20,11 @@ interface SidebarProps {
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
-  { icon: Users, label: 'Agents', id: 'users' },
-  { icon: Bell, label: 'Notifications', id: 'notifications' },
+  { icon: Users, label: 'Clients', id: 'users' },
+  { icon: Package, label: 'Orders', id: 'orders' },
+  { icon: Contact2, label: 'Leads', id: 'leads' },
   { icon: History, label: 'support', id: 'callHistory' },
-  { icon: Settings, label: 'Settings', id: 'settings' },
+  { icon: Bot, label: 'Agents ', id: 'settings' },
 ];
 
 export function Sidebar({ onNavigate }: SidebarProps) {
