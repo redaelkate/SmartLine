@@ -47,6 +47,8 @@ hangup_prompt = PromptTemplate(
          - Customer: "I don't have any other questions."
          - Decision: 'true'
 
+    if the agent asked a question offers help dont hangup
+
     ### Conversation:
     {conversation}
 
@@ -94,7 +96,7 @@ summarize_prompt = PromptTemplate(
 summarize_chain = summarize_prompt | llm
 
 
-async def generate_summary(conversation):
+def generate_summary(conversation):
     return summarize_chain.invoke(conversation).content
 
 
