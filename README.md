@@ -1,6 +1,3 @@
-Based on the image content you provided, it seems to outline a detailed workflow for the **SmartLine** system, particularly focusing on the **outbound call automation** process. Below, I’ve expanded the explanation of the SaaS by incorporating the workflow details from the image. This will help provide a more comprehensive understanding of how the system operates.
-
----
 
 # **SmartLine**
 
