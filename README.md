@@ -22,6 +22,7 @@ Explore the live demo of SmartLine:
 
 - **AI-Powered Agents**: Intelligent agents capable of handling customer interactions, sales, and support tasks.
 - **Task Automation**: Automate repetitive tasks such as appointment scheduling, order tracking, and FAQs.
+- **Edits on spreadsheets**: puts the output of the call ( summary , transcript and order name ) on a spreadsheet for the owner to see
 - **Real-Time Analytics**: Monitor agent performance, customer satisfaction, and task completion rates.
 - **Customizable Workflows**: Tailor AI agents to suit specific business needs.
 
@@ -180,7 +181,14 @@ The system uses **Twilio** for call automation and **FastAPI** for real-time aud
 
 
 ---
-
+## Our unique features 
+- can make an inbound and outbound call
+- can talk in mutilanguage
+- can check order status
+- can search for items
+- can hangup the call when the actuall call is ended
+- provides the full transcript of the call and a summary of it
+- can add and edit on a google spreadsheet when confirming orders or generating leads
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
