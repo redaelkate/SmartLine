@@ -3,6 +3,103 @@ from tools.check_shipping_status_tool import check_shipping_status_tool_definiti
 from tools.check_stock_tool import check_stock_tool_definition
 from tools.search_product_tool import search_product_tool_definition
 from tools.process_order_tool import process_order_tool_definition
+from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+from dotenv import load_dotenv
+load_dotenv()
+llm = ChatOpenAI(model="gpt-4o-mini-2024-07-18", temperature=0)
+
+
+
+
+hangup_prompt = PromptTemplate(
+    input_variables=["conversation"],
+    template="""You are an AI that decides if a call should end. Respond with 'true' to end the call, otherwise 'false'.
+
+    ### Rules:
+    1. **Gratitude with No Follow-Up**:
+       - If the customer says "thank you", "thanks", "merci", "shukran", or similar, and does not ask further questions, end the call.
+       - Example: 
+         - Customer: "Thank you!"
+         - Agent: "You're welcome!"
+         - Decision: 'true'
+
+    3. **Call Completion**:
+       - End the call if the customer's request is fully addressed and no further help is needed.
+       - Example:
+         - Customer: "That's all I needed, thanks!"
+         - Agent: "You're welcome!"
+         - Decision: 'true'
+
+    4. **Unproductive Conversation**:
+       - End the call if the conversation becomes repetitive, unproductive, or off-topic.
+       - Example:
+         - Customer: (repeats the same question without new information)
+         - Decision: 'true'
+
+    5. **Prolonged Silence**:
+       - End the call if the customer does not respond for more than 10 seconds after your message.
+       - Example:
+         - Agent: "Is there anything else I can assist you with?"
+         - Customer: (silence for 15 seconds)
+         - Decision: 'true'
+
+    6. **Customer Confirms Completion**:
+       - End the call if the customer explicitly states they have no further questions.
+       - Example:
+         - Customer: "I don't have any other questions."
+         - Decision: 'true'
+
+    ### Conversation:
+    {conversation}
+
+    ### Decision:
+    Should the call be ended? Respond with 'true' or 'false'.
+    """
+)
+
+hangup_chain =hangup_prompt | llm
+
+async def should_hangup(conversation):
+    """
+    Determines if the call should be ended based on the conversation.
+    Returns True if the call should be hung up, otherwise False.
+    """
+    conversation = conversation[:-5]
+    try:
+        result = hangup_chain.invoke(conversation)
+        decision = result.content.strip().lower()
+        if decision not in ["true", "false"]:
+            logging.warning(f"Unexpected decision from hangup agent: {decision}")
+            return False  
+
+        return decision == "true"
+    except Exception as e:
+        logging.error(f"Error in should_hangup: {e}")
+        return False 
+
+
+
+summarize_prompt = PromptTemplate(
+    input_variables=["conversation"],
+    template="""You are an AI specialized in summarizing conversations. 
+    Provide a concise yet thorough summary of the following conversation,
+    focusing on key details, the customer's intent, and important requests.
+    maximum 3 sentences.
+
+    Conversation:
+    {conversation}
+    """
+)
+summarize_chain = summarize_prompt | llm
+
+
+async def generate_summary(conversation):
+    return summarize_chain.invoke(conversation).content
+
+
+
 
 async def welcome_message(openai_ws):
     welcome_message = {
@@ -34,6 +131,7 @@ async def send_session_update(openai_ws, voice, system_message):
             "voice": voice,
             "instructions": system_message,
             "modalities": ["text", "audio"],
+            "input_audio_transcription": {"model": "whisper-1"},
             "temperature": 0.8,
             "tool_choice": "auto",
             "tools": [check_shipping_status_tool_definition, check_stock_tool_definition, search_product_tool_definition, process_order_tool_definition]
