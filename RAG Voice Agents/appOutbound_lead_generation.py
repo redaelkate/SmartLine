@@ -361,9 +361,9 @@ async def initialize_session(openai_ws):
 
 if __name__ == "__main__": # python appOutbound.py --call=+18005551212
     parser = argparse.ArgumentParser(description="Run the Twilio AI voice assistant server.")
-    parser.add_argument('--call', default="+212708279841", help="The phone number to call, e.g., '--call=+18005551212'")
+    parser.add_argument('--call', default=os.getenv("PHONE_NUMBER_TO"), help="The phone number to call, e.g., '--call=+18005551212'")
     args = parser.parse_args()
-    
+
     phone_number = args.call
     print(
         'Our recommendation is to always disclose the use of AI for outbound or inbound calls.\n'
