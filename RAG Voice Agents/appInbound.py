@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from helpers.twilio import twilio_stream
 from helpers.voice_system_prompt import SYSTEM_MESSAGE
-from services.openai_functions import welcome_message, send_session_update, generate_audio_response,generate_summary
+from services.openai_functions import welcome_message, send_session_update, generate_audio_response
 from tools.execute_tool import execute_tool
 from twilio.twiml.voice_response import VoiceResponse
 from fastapi.responses import Response
@@ -37,9 +37,16 @@ transcript = []
 
 
 
+
+
+
+
+
+
 # Set up the logger with the custom handler
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
 
 # Create a formatter
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -79,14 +86,10 @@ async def handle_incoming_call(request: Request):
 
 
 
+
 async def handle_hangup(transcript, stream_sid, openai_ws, call_sid):
     try:
-        summary = await generate_summary(transcript)
-        print(f"""
-            ########################################
-            {summary}
-            ########################################
-        """)
+
         
         await generate_audio_response(stream_sid, openai_ws, "Goodbye, ending the call.")
         
@@ -158,16 +161,6 @@ async def handle_media_stream(websocket: WebSocket):
                     if not openai_ws.closed:
                         await openai_ws.close()
 
-                    summary = await generate_summary(transcript)
-                    print(f"""
-                    ########################################
-                    {summary}
-                    ########################################
-                    """)
-                    if summary:
-                        logging.info(f"Conversation Summary:\n{summary}")
-                    else:
-                        logging.error("Failed to generate summary.")
 
                 except Exception as e:
                     logging.error(f"Error in receive_from_twilio: {e}")
@@ -294,5 +287,6 @@ if __name__ == "__main__":
         # Start the Uvicorn server with the FastAPI app, running on the specified port
         uvicorn.run(app, host="127.0.0.1", port=PORT,log_config=None)
     except Exception as error:
+        # Log the error in case the server fails to start
         logging.error(f"Error: {error}")
         raise error
