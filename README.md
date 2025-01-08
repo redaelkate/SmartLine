@@ -2,7 +2,7 @@
 
 
 
-# SmartLine
+
 
 SmartLine is an AI-powered automation platform designed to replace traditional human call center agents with intelligent AI agents. These agents can handle a wide range of business tasks, including customer support, sales, appointment scheduling, and more. Built with **Django** (backend), **React.js** (frontend), and **MySQL** (database), SmartLine is a scalable and efficient solution for businesses looking to automate their operations.
 
@@ -188,11 +188,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ```
 
 ---
-
-### **Documenting the UI**
-
-Since you’re using AI agents, the UI likely includes dashboards, chat interfaces, and analytics panels. Here’s how you can document it:
-
 #### **1. Key Pages**
 - **Dashboard**: Overview of AI agent performance, task completion rates, and customer satisfaction.
 - **Chat Interface**: Where customers interact with AI agents.
