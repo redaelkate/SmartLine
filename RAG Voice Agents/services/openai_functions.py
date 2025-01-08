@@ -7,6 +7,7 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from dotenv import load_dotenv
+import asyncio
 load_dotenv()
 llm = ChatOpenAI(model="gpt-4o-mini-2024-07-18", temperature=0)
 
@@ -19,7 +20,7 @@ hangup_prompt = PromptTemplate(
 
     ### Rules:
     1. **Gratitude with No Follow-Up**:
-       - If the customer says "thank you", "thanks", "merci", "shukran", or similar, and does not ask further questions, end the call.
+       - If the customer says "thank you", "thanks", "merci", "shukran", or similar, and from the previous messages shows he got what he want.
        - Example: 
          - Customer: "Thank you!"
          - Agent: "You're welcome!"
@@ -32,17 +33,12 @@ hangup_prompt = PromptTemplate(
          - Agent: "You're welcome!"
          - Decision: 'true'
 
-    4. **Unproductive Conversation**:
-       - End the call if the conversation becomes repetitive, unproductive, or off-topic.
-       - Example:
-         - Customer: (repeats the same question without new information)
-         - Decision: 'true'
 
     5. **Prolonged Silence**:
        - End the call if the customer does not respond for more than 10 seconds after your message.
        - Example:
          - Agent: "Is there anything else I can assist you with?"
-         - Customer: (silence for 15 seconds)
+         - Customer: no thank you
          - Decision: 'true'
 
     6. **Customer Confirms Completion**:
@@ -61,14 +57,17 @@ hangup_prompt = PromptTemplate(
 
 hangup_chain =hangup_prompt | llm
 
+import concurrent.futures
+
 async def should_hangup(conversation):
     """
     Determines if the call should be ended based on the conversation.
     Returns True if the call should be hung up, otherwise False.
     """
-    conversation = conversation[:-5]
+    conversation = conversation[:-10]
+    loop = asyncio.get_running_loop()
     try:
-        result = hangup_chain.invoke(conversation)
+        result = await loop.run_in_executor(None, hangup_chain.invoke, conversation)
         decision = result.content.strip().lower()
         if decision not in ["true", "false"]:
             logging.warning(f"Unexpected decision from hangup agent: {decision}")
@@ -77,7 +76,7 @@ async def should_hangup(conversation):
         return decision == "true"
     except Exception as e:
         logging.error(f"Error in should_hangup: {e}")
-        return False 
+        return False
 
 
 
