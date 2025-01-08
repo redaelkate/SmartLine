@@ -21,7 +21,7 @@ from .models import LeadGeneration,OrderConfirmation
 from .serializers import LeadGenerationSerializer
 from .models import OrderConfirmation
 from .serializers import OrderConfirmationSerializer
-
+from django.db.models.functions import Length
 
 
 
@@ -86,7 +86,7 @@ from .serializers import (
     CallTranscriptSerializer, CallPerformanceSerializer, AIInteractionMetricsSerializer,
     CustomerSatisfactionSerializer, AgentPerformanceSerializer, CallTrendsSerializer,
     CallQueueSerializer, ServiceLevelSerializer, ConversionAnalyticsSerializer,
-    AgentInteractionLogSerializer, DetailedCallAnalyticsSerializer
+    AgentInteractionLogSerializer, DetailedCallAnalyticsSerializer,ClientSerializer
 )
 
 class SubscriptionPlanDistribution(APIView):
@@ -220,8 +220,27 @@ class DashboardData(APIView):
         call_category_data = DetailedCallAnalytics.objects.values('call_category').annotate(count=Count('id'))
 
         # Transcript Length Distribution
-        transcript_length_data = CallTranscript.objects.annotate(length=Count('transcript')).values('length').annotate(count=Count('id'))
+        transcript_length_data = CallTranscript.objects.annotate(length=Length('transcript')).values('length').order_by('length') 
 
+        # Clients data
+        clients_data = ClientSerializer(Client.objects.all(), many=True).data
+
+        # Agents data
+        agents_data = AgentSerializer(Agent.objects.all(), many=True).data
+
+        # Leads data
+        leads_data = LeadGenerationSerializer(LeadGeneration.objects.all(), many=True).data
+
+        # Orders data
+        orders_data = OrderConfirmationSerializer(OrderConfirmation.objects.all(), many=True).data
+
+
+        
+
+        
+
+        
+            
         return Response({
             'subscription_distribution': subscription_data,
             'admins_per_organization': admins_data,
@@ -238,6 +257,10 @@ class DashboardData(APIView):
             'interaction_type_distribution': interaction_type_data,
             'call_category_distribution': call_category_data,
             'transcript_length_distribution': transcript_length_data,
+            'clients': clients_data,
+            'agents': agents_data,
+            'leads': leads_data,
+            'orders': orders_data,
         })
     
 

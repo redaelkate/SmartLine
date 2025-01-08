@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
+import  ExcelJs  from 'exceljs';
 
 const FileDrop = ({ onFileUpload, fileType, setFileType, handleDownload }) => {
   const onDrop = useCallback(
@@ -55,7 +56,7 @@ const FileDrop = ({ onFileUpload, fileType, setFileType, handleDownload }) => {
 export function QuickActions() {
   const [fileType, setFileType] = useState('leads');
   const [dashboardData, setDashboardData] = useState({
-    adminsPerOrg: [],
+    
     agentStatus: [],
     callType: [],
     avgCallDuration: [],
@@ -69,8 +70,13 @@ export function QuickActions() {
     interactionType: [],
     callCategory: [],
     transcriptLength: [],
+    clients: [],
+    agents: [],
+    leads: [],
+    orders: [],
   });
 
+  const [moreData, setMoreData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -80,7 +86,7 @@ export function QuickActions() {
       try {
         const response = await axios.get("https://d0rgham.pythonanywhere.com/api/dashboard-data/");
         setDashboardData({
-          adminsPerOrg: response.data.admins_per_organization || [],
+          
           agentStatus: response.data.agent_status_distribution || [],
           callType: response.data.call_type_distribution || [],
           avgCallDuration: response.data.average_call_duration || [],
@@ -94,6 +100,10 @@ export function QuickActions() {
           interactionType: response.data.interaction_type_distribution || [],
           callCategory: response.data.call_category_distribution || [],
           transcriptLength: response.data.transcript_length_distribution || [],
+          clients: response.data.clients || [],
+          agents: response.data.agents || [],
+          leads: response.data.leads || [],
+          orders: response.data.orders || [],
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -107,38 +117,46 @@ export function QuickActions() {
   }, []);
 
   // Function to export dashboard data as CSV
-  const exportReportAsCSV = (dashboardData) => {
-    // Create CSV headers
-    const headers = Object.keys(dashboardData).join(",");
+  const exportReportAsExcel = async (dashboardData) => {
+    console.log("Exporting report as Excel:", dashboardData);
 
-    // Create CSV rows
-    const rows = Object.values(dashboardData)
-      .map((value) => {
-        if (Array.isArray(value)) {
-          // If the value is an array, join its elements with commas
-          return value.map((item) => JSON.stringify(item)).join(",");
-        } else {
-          // If the value is not an array, stringify it
-          return JSON.stringify(value);
-        }
-      })
-      .join("\n");
+    // Create a new workbook
+    const workbook = new ExcelJs.Workbook();
 
-    // Combine headers and rows
-    const csvContent = `${headers}\n${rows}`;
+    // Helper function to add a worksheet with data
+    const addSheet = (workbook, sheetName, data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        const worksheet = workbook.addWorksheet(sheetName);
 
-    // Create and trigger download
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        // Add headers
+        const headers = Object.keys(data[0]);
+        worksheet.addRow(headers);
+
+        // Add rows
+        data.forEach((item) => {
+          const row = headers.map((header) => item[header]);
+          worksheet.addRow(row);
+        });
+      }
+    };
+
+    // Add a worksheet for each key in dashboardData
+    Object.keys(dashboardData).forEach((key) => {
+      addSheet(workbook, key, dashboardData[key]);
+    });
+
+    // Generate Excel file and trigger download
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = "dashboard_report.csv";
+    a.download = 'dashboard_report.xlsx';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  };
-
+  }
   // Handle file upload
   const handleFileUpload = async (files, fileType) => {
     const formData = new FormData();
@@ -165,7 +183,7 @@ export function QuickActions() {
 
   // Handle download button click
   const handleDownload = () => {
-    exportReportAsCSV(dashboardData);
+    exportReportAsExcel(dashboardData);
   };
 
   return (

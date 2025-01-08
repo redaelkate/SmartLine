@@ -11,7 +11,7 @@ const Chart = lazy(() => import("react-apexcharts"));
 
 export const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
-    adminsPerOrg: [],
+    
     agentStatus: [],
     callType: [],
     avgCallDuration: [],
@@ -36,7 +36,7 @@ export const Dashboard = () => {
       try {
         const response = await axios.get("https://d0rgham.pythonanywhere.com/api/dashboard-data/");
         setDashboardData({
-          adminsPerOrg: response.data.admins_per_organization || [],
+          
           agentStatus: response.data.agent_status_distribution || [],
           callType: response.data.call_type_distribution || [],
           avgCallDuration: response.data.average_call_duration || [],
@@ -65,8 +65,7 @@ export const Dashboard = () => {
   const [total_users, setTotalUsers] = useState(0);
 
   // Memoize data transformations
-  const adminsPerOrgData = useMemo(() => dashboardData.adminsPerOrg.map((item) => item.count), [dashboardData.adminsPerOrg]);
-  const adminsPerOrgCategories = useMemo(() => dashboardData.adminsPerOrg.map((item) => item.organization__name), [dashboardData.adminsPerOrg]);
+  
 
   const agentStatusData = useMemo(() => dashboardData.agentStatus.map((item) => item.count), [dashboardData.agentStatus]);
   const agentStatusLabels = useMemo(() => dashboardData.agentStatus.map((item) => item.status), [dashboardData.agentStatus]);
@@ -142,20 +141,8 @@ export const Dashboard = () => {
         <QuickActions />
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Admins per Organization */}
-          <Suspense fallback={<div>Loading Chart...</div>}>
-            <Chart
-              type="bar"
-              series={[{ data: adminsPerOrgData }]}
-              options={{
-                chart: { toolbar: { show: false } },
-                xaxis: { categories: adminsPerOrgCategories },
-                title: { text: "Admins per Organization" },
-              }}
-              width="100%"
-              height="300px"
-            />
-          </Suspense>
+        
+          
 
           {/* Agent Status Distribution */}
           <Suspense fallback={<div>Loading Chart...</div>}>
@@ -338,6 +325,7 @@ export const Dashboard = () => {
           </Suspense>
 
           {/* Transcript Length Distribution */}
+          <div className="col-span-3">
           <Suspense fallback={<div>Loading Chart...</div>}>
             <Chart
               type="bar"
@@ -349,8 +337,10 @@ export const Dashboard = () => {
               }}
               width="100%"
               height="300px"
+              
             />
           </Suspense>
+          </div>
         </div>
       </div>
     </div>
