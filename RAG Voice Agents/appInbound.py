@@ -15,6 +15,7 @@ from twilio.twiml.voice_response import VoiceResponse
 from fastapi.responses import Response
 from twilio.rest import Client
 from services.openai_functions import should_hangup
+from ConnectionClosed import ConnectionClosedHandler, execute_on_connection_closed
 
 
 
@@ -31,6 +32,35 @@ DOMAIN = os.getenv("DOMAIN")
 
 call_sid=None
 transcript = []
+
+
+
+
+
+# Set up the logger with the custom handler
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Create a formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Add the custom handler to the logger
+handler = ConnectionClosedHandler(execute_on_connection_closed, transcript)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+##########
+# Configure Uvicorn to use the same logger
+uvicorn_logger = logging.getLogger("uvicorn")
+uvicorn_logger.setLevel(logging.INFO)
+uvicorn_logger.addHandler(handler)
+
+
+
+
+
+
+
 @app.api_route("/stream/incoming-call", methods=["GET", "POST"])
 async def handle_incoming_call(request: Request):
     global call_sid
@@ -140,12 +170,14 @@ async def handle_media_stream(websocket: WebSocket):
                         logging.error("Failed to generate summary.")
 
                 except Exception as e:
-                    logging.error(f"Unexpected disconnect MOUAD: {e}")
+                    logging.error(f"Error in receive_from_twilio: {e}")
 
             async def send_to_twilio():
                 nonlocal stream_sid, current_item_id, response_start_timestamp_twilio, latest_media_timestamp
                 try:
                     async for openai_message in openai_ws:
+
+                        
                         response = json.loads(openai_message.data)
 
                         if response['type'] == 'session.created':
@@ -181,23 +213,31 @@ async def handle_media_stream(websocket: WebSocket):
                             await generate_audio_response(stream_sid, openai_ws, result['result'])
 
                         if response['type'] == 'response.audio.delta' and response.get('delta'):
-                            audio_delta = {
-                                "event": "media",
-                                "streamSid": stream_sid,
-                                "media": {
-                                    "payload": response['delta']
-                                }
-                            }
-                            await websocket.send_json(audio_delta)
-                            
-                            if response_start_timestamp_twilio is None:
-                                response_start_timestamp_twilio = latest_media_timestamp
-                                logging.info(f"Setting start timestamp for new response: {response_start_timestamp_twilio}ms")
-                            
-                            if response.get('item_id'):
-                                current_item_id = response['item_id']
 
-                            await send_mark(websocket, stream_sid)
+                            try:
+                                audio_delta = {
+                                    "event": "media",
+                                    "streamSid": stream_sid,
+                                    "media": {
+                                        "payload": response['delta']
+                                    }
+                                }
+                                await websocket.send_json(audio_delta)
+                                
+                                if response_start_timestamp_twilio is None:
+                                    response_start_timestamp_twilio = latest_media_timestamp
+                                    logging.info(f"Setting start timestamp for new response: {response_start_timestamp_twilio}ms")
+                                
+                                if response.get('item_id'):
+                                    current_item_id = response['item_id']
+
+                                await send_mark(websocket, stream_sid)
+                            except RuntimeError as e:
+                                if "Unexpected ASGI message 'websocket.send'" in str(e):
+                                    logging.warning("WebSocket connection is closed. Cannot send audio delta.")
+                                    break
+                                else:
+                                    raise e
 
 
                         # Handle interruptions when user starts speaking
@@ -252,8 +292,7 @@ async def handle_media_stream(websocket: WebSocket):
 if __name__ == "__main__":
     try:
         # Start the Uvicorn server with the FastAPI app, running on the specified port
-        uvicorn.run(app, host="127.0.0.1", port=PORT)
+        uvicorn.run(app, host="127.0.0.1", port=PORT,log_config=None)
     except Exception as error:
-        # Log the error in case the server fails to start
         logging.error(f"Error: {error}")
         raise error
