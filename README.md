@@ -9,12 +9,16 @@ SmartLine is an AI-powered automation platform designed to replace traditional h
 ## **Inbound and Outbound Call System**
 
 SmartLine provides two main functionalities for call automation:
-1. **Inbound Calls**: Handles incoming customer support calls.
+1. **Inbound Calls**: 
+
+The Inbound Call System is designed to handle incoming customer support calls efficiently. It uses Twilio's WebSocket API for real-time audio streaming and OpenAI's GPT model to generate intelligent, context-aware responses.
 
 <img src="inbound.png" alt="Inbound" width="700">
 
   
-2. **Outbound Calls**: Manages outbound calls for lead generation, order status checking, and order confirmation.
+2. **Outbound Calls**:
+
+The Outbound Call System automates proactive customer engagement for tasks like lead generation, order status updates, and order confirmations. It ensures businesses can reach out to customers efficiently and effectively.
 
 <img src="outbound.png" alt="outbound" width="700">
 
