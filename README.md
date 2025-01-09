@@ -3,16 +3,18 @@
 
 SmartLine is an AI-powered automation platform designed to replace traditional human call center agents with intelligent AI agents. These agents can handle a wide range of business tasks, including customer support, lead generation, order confirmation, and more. Built with **Django** (backend), **React.js** (frontend), and **MySQL** (database), SmartLine is a scalable and efficient solution for businesses looking to automate their operations.
 
-<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-  <div style="flex: 1; margin-right: 10px; text-align: left;">
-    <img src="inbound.png" alt="Inbound - Customer Support" style="width: 100%;">
-    <p style="text-align: center; font-style: italic;">Inbound - Customer Support</p>
+<div style="text-align: center;">
+  <div style="margin-bottom: 20px;">
+    <img src="inbound.png" alt="Inbound - Customer Support" style="width: 100%; max-width: 600px;">
+    <p style="font-style: italic; margin-top: 10px;">Inbound - Customer Support</p>
   </div>
-  <div style="flex: 1; margin-left: 10px; text-align: right;">
-    <img src="outbound.png" alt="Outbound - Lead Generation, Order Status, Order Confirmation" style="width: 100%;">
-    <p style="text-align: center; font-style: italic;">Outbound - Lead Generation, Order Status, Order Confirmation</p>
+  <div style="margin-bottom: 20px;">
+    <img src="outbound.png" alt="Outbound - Lead Generation, Order Status, Order Confirmation" style="width: 100%; max-width: 600px;">
+    <p style="font-style: italic; margin-top: 10px;">Outbound - Lead Generation, Order Status, Order Confirmation</p>
   </div>
 </div>
+
+
 ## Live Demo
 
 Explore the live demo of SmartLine:  
