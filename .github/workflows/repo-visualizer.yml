@@ -1,0 +1,22 @@
+name: Repo Visualizer
+on:
+  push:
+    branches:
+      - main
+jobs:
+  visualize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Generate visualization
+        uses: githubocto/repo-visualizer@v1
+        with:
+          output: visualization.svg
+      - name: Commit and push visualization
+        run: |
+          git config --global user.name "Hamza-Bouali"
+          git config --global user.email "hamza.bouali@esi.ac.ma"
+          git add visualization.svg
+          git commit -m "Update repository visualization"
+          git push
