@@ -6,26 +6,33 @@ SmartLine is an advanced AI-powered automation platform designed to replace trad
 
 ## **Table of Contents**
 
-1. [Inbound and Outbound Call System](#inbound-and-outbound-call-system)
+1. [Project Overview](#project-overview)
+2. [Inbound and Outbound Call System](#inbound-and-outbound-call-system)
    - [Inbound Call System](#inbound-call-system)
    - [Outbound Call System](#outbound-call-system)
-2. [Unique Features](#unique-features)
-3. [Live Demo](#live-demo)
-4. [Features](#features)
-5. [Technologies Used](#technologies-used)
-6. [Prerequisites](#prerequisites)
-7. [Installation](#installation)
+3. [Unique Features](#unique-features)
+4. [Live Demo](#live-demo)
+5. [Key Features](#key-features)
+6. [Technologies Used](#technologies-used)
+7. [Prerequisites](#prerequisites)
+8. [Installation](#installation)
    - [Backend (Django)](#backend-django)
    - [Frontend (React.js)](#frontend-reactjs)
-8. [Deployment](#deployment)
+9. [Deployment](#deployment)
    - [Frontend (Vercel)](#frontend-vercel)
    - [Backend (PythonAnywhere)](#backend-pythonanywhere)
-9. [AI Agent Workflow](#ai-agent-workflow)
-   - [Outbound Call Automation Workflow](#outbound-call-automation-workflow)
-10. [Contributing](#contributing)
-11. [License](#license)
-12. [Acknowledgments](#acknowledgments)
-13. [Key Pages](#key-pages)
+10. [AI Agent Workflow](#ai-agent-workflow)
+    - [Outbound Call Automation Workflow](#outbound-call-automation-workflow)
+11. [Contributing](#contributing)
+12. [License](#license)
+13. [Acknowledgments](#acknowledgments)
+14. [Key Pages](#key-pages)
+
+---
+
+## **Project Overview**
+
+SmartLine is designed to streamline and automate call center operations, reducing the need for human intervention while maintaining high levels of customer satisfaction. By leveraging AI technologies, SmartLine provides a cost-efficient and scalable solution for businesses of all sizes.
 
 ---
 
