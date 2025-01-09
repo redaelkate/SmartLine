@@ -97,8 +97,11 @@ The **Outbound Call System** is used for making automated calls for:
 
 Explore the live demo of SmartLine:  
 🌐 [SmartLine Live Demo](https://test-eight-zeta-80.vercel.app/)  
+
 📹 [Video of the AI agent doing order confirmation](https://drive.google.com/file/d/1laPzp-da437sSdDf62HsXd2tCMaSi42J/view?usp=sharing)
+
 📹 [Video of the AI agent doing lead generation](https://drive.google.com/drive/folders/1bVD4NszuSOxFZiIrEBq4bxKkSt-OMcMe)
+
 📹 [Video of the AI agent receiving customer inquiries](https://drive.google.com/drive/folders/1bVD4NszuSOxFZiIrEBq4bxKkSt-OMcMe)
 
 ---
