@@ -8,24 +8,6 @@ SmartLine is an AI-powered automation platform designed to replace traditional h
 
 ## **Inbound and Outbound Call System**
 
-SmartLine provides two main functionalities for call automation:
-1. **Inbound Calls**: 
-
-The Inbound Call System is designed to handle incoming customer support calls efficiently. It uses Twilio's WebSocket API for real-time audio streaming and OpenAI's GPT model to generate intelligent, context-aware responses.
-
-<img src="inbound.png" alt="Inbound" width="700">
-
-  
-2. **Outbound Calls**:
-
-The Outbound Call System automates proactive customer engagement for tasks like lead generation, order status updates, and order confirmations. It ensures businesses can reach out to customers efficiently and effectively.
-
-<img src="outbound.png" alt="outbound" width="700">
-
-
-Both systems are built using **FastAPI**, **Twilio**, and **OpenAI** for real-time voice interactions.
-
----
 
 ### **Inbound Call System**
 
@@ -42,6 +24,9 @@ The **Inbound Call System** is designed to handle incoming customer support call
 2. The system establishes a WebSocket connection with Twilio and OpenAI.
 3. Audio is streamed in real-time, and OpenAI generates responses based on the conversation.
 4. The call transcript is logged for future reference.
+
+
+<img src="inbound.png" alt="Inbound" width="700">
 
 ---
 
@@ -64,6 +49,8 @@ The **Outbound Call System** is used for making automated calls for:
 3. The AI introduces itself and interacts with the customer based on predefined prompts.
 4. The call transcript is logged for future reference.
 
+<img src="outbound.png" alt="outbound" width="700">
+
 ---
 
 ## **Our Unique Features**
@@ -74,7 +61,7 @@ The **Outbound Call System** is used for making automated calls for:
 - **Item Search**: Search for products or services during customer interactions.
 - **Smart Hangup**: Detect when a call ends and automatically hang up.
 - **Transcript and Summary**: Provide a full transcript and summary of each call.
-- **Google Sheets Integration**: Add and edit data in Google Sheets for order confirmations and lead generation.
+- **Post-Call Processing(Google Sheets Integration)**: Add and edit data in Google Sheets for order confirmations and lead generation.
 
 ---
 
