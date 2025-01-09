@@ -283,7 +283,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## **Project Context**
 
-This project, SmartLine, was developed as part of a hackathon organized by [**AI Crafters**](https://aicrafters.com/). The hackathon aimed to explore innovative solutions in AI-driven automation, and SmartLine emerged as a promising solution for automating call center operations.
+This project, SmartLine, was developed as part of a hackathon organized by [**AI Crafters**](https://aicrafters.com/). The hackathon focused on building voice bots, and SmartLine emerged as a promising solution designed to streamline call center operations.
 
 ---
 
