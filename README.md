@@ -11,7 +11,7 @@ SmartLine is an AI-powered automation platform designed to replace traditional h
 SmartLine provides two main functionalities for call automation:
 1. **Inbound Calls**: Handles incoming customer support calls.
 
-<img src="inbound.png" alt="Inbound" width="200">
+<img src="inbound.png" alt="Inbound" width="500">
 
   
 2. **Outbound Calls**: Manages outbound calls for lead generation, order status checking, and order confirmation.
