@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Generate visualization
-        uses: githubocto/repo-visualizer@a9f9fc3 # Replace with the latest commit hash
+        uses: githubocto/repo-visualizer@main # Replace with the latest commit hash
         with:
           output: visualization.svg
       - name: Commit and push visualization
