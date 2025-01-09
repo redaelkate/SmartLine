@@ -1,0 +1,15 @@
+Django==5.1.4
+djangorestframework==3.15.2
+mysqlclient==2.2.6
+twilio==9.2.3
+openai==1.59.3
+langchain==0.3.14
+python-dotenv==1.0.1
+gunicorn==23.0.0
+fastapi==0.111.0
+uvicorn==0.30.0
+websockets==11.0.3
+google-api-python-client==2.129.0
+google-auth==2.29.0
+google-auth-oauthlib==1.2.1
+google-auth-httplib2==0.2.0
