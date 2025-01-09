@@ -294,4 +294,4 @@ This project, SmartLine, was developed as part of a hackathon organized by [**AI
 
 ## **Screenshots**
 
-![Website Demo](website-demo.png)
+<img src="website-demo.png" alt="website-demo" style="max-width: 20%; height: auto;">
