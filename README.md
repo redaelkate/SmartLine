@@ -1,6 +1,6 @@
 # **SmartLine: AI-Powered Call Center Automation**
 
-SmartLine is an advanced AI-powered automation platform designed to replace traditional human call center agents with intelligent AI agents. These agents can handle a wide range of business tasks, including customer support, lead generation, order confirmation, and more. Built with **Django** (backend), **React.js** (frontend), and **MySQL** (database), SmartLine is a scalable and efficient solution for businesses looking to automate their operations.
+SmartLine is an advanced AI-powered automation platform designed to replace traditional human call center agents with intelligent AI agents. These agents can handle a wide range of business tasks, including customer support, lead generation, order confirmation, and more. Built with **Django** (backend), **React.js** (frontend), and **MySQL** (database), for **Inbound & outbound** call agents built with **Twilio**, **OpenAI API**, and **LangChain**, SmartLine is a scalable and efficient solution for businesses looking to automate their operations.
 
 ---
 
@@ -12,19 +12,21 @@ SmartLine is an advanced AI-powered automation platform designed to replace trad
    - [Outbound Call System](#outbound-call-system)
 3. [Unique Features](#unique-features)
 4. [Live Demo](#live-demo)
-5. [Technologies Used](#technologies-used)
-6. [Prerequisites](#prerequisites)
-7. [Installation](#installation)
+5. [Key Features](#key-features)
+6. [Technologies Used](#technologies-used)
+7. [Prerequisites](#prerequisites)
+8. [Installation](#installation)
    - [Backend (Django)](#backend-django)
    - [Frontend (React.js)](#frontend-reactjs)
-8. [Deployment](#deployment)
+9. [Deployment](#deployment)
    - [Frontend (Vercel)](#frontend-vercel)
    - [Backend (PythonAnywhere)](#backend-pythonanywhere)
-9. [AI Agent Workflow](#ai-agent-workflow)
-10. [Contributing](#contributing)
+10. [AI Agent Workflow](#ai-agent-workflow)
+    - [Outbound Call Automation Workflow](#outbound-call-automation-workflow)
 11. [License](#license)
 12. [Key Pages](#key-pages)
-13. [Screenshots](#screenshots)
+13. [Project Context](#project-context)
+14. [Screenshots](#screenshots)
 
 ---
 
@@ -93,10 +95,19 @@ The **Outbound Call System** is used for making automated calls for:
 
 ## **Live Demo**
 
-Explore the live demo of SmartLine to see the frontend and backend in action:
-
+Explore the live demo of SmartLine:  
 🌐 [SmartLine Live Demo](https://test-eight-zeta-80.vercel.app/)  
 📹 [Video of the AI agents before the integration](https://drive.google.com/file/d/1laPzp-da437sSdDf62HsXd2tCMaSi42J/view?usp=sharing)
+
+---
+
+## **Key Features**
+
+- **AI-Powered Agents**: Intelligent agents capable of handling customer interactions, sales, and support tasks.
+- **Task Automation**: Automate repetitive tasks such as appointment scheduling, order tracking, and FAQs.
+- **Edits on Spreadsheets**: Puts the output of the call (summary, transcript, and order name) on a spreadsheet for the owner to see.
+- **Real-Time Analytics**: Monitor agent performance, customer satisfaction, and task completion rates.
+- **Customizable Workflows**: Tailor AI agents to suit specific business needs.
 
 ---
 
@@ -222,17 +233,36 @@ SmartLine's AI agents are designed to handle the following tasks:
 3. **Appointment Scheduling**: Book, reschedule, and cancel appointments.
 4. **Data Collection**: Gather customer feedback and insights for analytics.
 
----
+### **Outbound Call Automation Workflow**
 
-## **Contributing**
+The system uses **Twilio** for call automation and **FastAPI** for real-time audio streaming and AI integration. Here’s how the workflow operates:
 
-Contributions are welcome! Please follow these steps:
+1. **Initiate Outbound Call**:
+   - The system initiates an outbound call using the **Twilio Service**.
+   - The **Twilio Agent** handles the call setup and connection.
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeatureName`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/YourFeatureName`).
-5. Open a pull request.
+2. **Play Audio to Customer**:
+   - Once the call is connected, the system plays pre-recorded or dynamically generated audio to the customer.
+
+3. **Customer Responds**:
+   - The customer’s response is captured and streamed to the **FastAPI Application**.
+
+4. **Stream Audio to AI Model**:
+   - The **FastAPI Agent** streams the customer’s audio to the **AI Model Service** for processing.
+
+5. **Generate Response**:
+   - The **AI Model Agent** analyzes the audio and generates an appropriate response.
+   - The response is sent back to the **FastAPI Agent**.
+
+6. **Stream Response to Twilio**:
+   - The generated response is streamed back to the customer via the **Twilio Service**.
+
+7. **Handle Hangup**:
+   - The **Hangup Check Agent** continuously monitors the call for a hangup signal.
+   - If a hangup is detected, the **Handle Hangup Agent** terminates the call and triggers post-call processing.
+
+8. **Post-Call Processing**:
+   - The **Data Collection Agent** collects call data and updates the **Excel Sheet** for reporting and analytics.
 
 ---
 
@@ -251,7 +281,12 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
+## **Project Context**
+
+This project, SmartLine, was developed as part of a hackathon organized by **AI Crafters** ([https://aicrafters.com/](https://aicrafters.com/)). The hackathon aimed to explore innovative solutions in AI-driven automation, and SmartLine emerged as a promising solution for automating call center operations.
+
+---
+
 ## **Screenshots**
 
 ![Website Demo](website-demo.png)
-
