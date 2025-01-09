@@ -1,13 +1,35 @@
-# **SmartLine**
+# **SmartLine: AI-Powered Call Center Automation**
 
-SmartLine is an AI-powered automation platform designed to replace traditional human call center agents with intelligent AI agents. These agents can handle a wide range of business tasks, including customer support, lead generation, order confirmation, and more. Built with **Django** (backend), **React.js** (frontend), and **MySQL** (database), SmartLine is a scalable and efficient solution for businesses looking to automate their operations.
+SmartLine is an advanced AI-powered automation platform designed to replace traditional human call center agents with intelligent AI agents. These agents can handle a wide range of business tasks, including customer support, lead generation, order confirmation, and more. Built with **Django** (backend), **React.js** (frontend), and **MySQL** (database), SmartLine is a scalable and efficient solution for businesses looking to automate their operations.
 
+---
 
+## **Table of Contents**
+
+1. [Inbound and Outbound Call System](#inbound-and-outbound-call-system)
+   - [Inbound Call System](#inbound-call-system)
+   - [Outbound Call System](#outbound-call-system)
+2. [Unique Features](#unique-features)
+3. [Live Demo](#live-demo)
+4. [Features](#features)
+5. [Technologies Used](#technologies-used)
+6. [Prerequisites](#prerequisites)
+7. [Installation](#installation)
+   - [Backend (Django)](#backend-django)
+   - [Frontend (React.js)](#frontend-reactjs)
+8. [Deployment](#deployment)
+   - [Frontend (Vercel)](#frontend-vercel)
+   - [Backend (PythonAnywhere)](#backend-pythonanywhere)
+9. [AI Agent Workflow](#ai-agent-workflow)
+   - [Outbound Call Automation Workflow](#outbound-call-automation-workflow)
+10. [Contributing](#contributing)
+11. [License](#license)
+12. [Acknowledgments](#acknowledgments)
+13. [Key Pages](#key-pages)
 
 ---
 
 ## **Inbound and Outbound Call System**
-
 
 ### **Inbound Call System**
 
@@ -24,7 +46,6 @@ The **Inbound Call System** is designed to handle incoming customer support call
 2. The system establishes a WebSocket connection with Twilio and OpenAI.
 3. Audio is streamed in real-time, and OpenAI generates responses based on the conversation.
 4. The call transcript is logged for future reference.
-
 
 <img src="inbound.png" alt="Inbound" width="700">
 
@@ -53,7 +74,7 @@ The **Outbound Call System** is used for making automated calls for:
 
 ---
 
-## **Our Unique Features**
+## **Unique Features**
 
 - **Inbound and Outbound Calls**: Handle both incoming and outgoing calls seamlessly.
 - **Multilingual Support**: Communicate with customers in multiple languages.
@@ -61,7 +82,7 @@ The **Outbound Call System** is used for making automated calls for:
 - **Item Search**: Search for products or services during customer interactions.
 - **Smart Hangup**: Detect when a call ends and automatically hang up.
 - **Transcript and Summary**: Provide a full transcript and summary of each call.
-- **Post-Call Processing(Google Sheets Integration)**: Add and edit data in Google Sheets for order confirmations and lead generation.
+- **Post-Call Processing (Google Sheets Integration)**: Add and edit data in Google Sheets for order confirmations and lead generation.
 
 ---
 
@@ -108,7 +129,7 @@ Before running the project, ensure you have the following installed:
 
 ## **Installation**
 
-### Backend (Django)
+### **Backend (Django)**
 
 1. Clone the repository:
    ```bash
@@ -153,7 +174,7 @@ Before running the project, ensure you have the following installed:
    python manage.py runserver
    ```
 
-### Frontend (React.js)
+### **Frontend (React.js)**
 
 1. Navigate to the frontend directory:
    ```bash
@@ -174,7 +195,8 @@ Before running the project, ensure you have the following installed:
 
 ## **Deployment**
 
-### Frontend (Vercel)
+### **Frontend (Vercel)**
+
 The frontend is deployed on Vercel. To deploy your own version:
 1. Install the Vercel CLI:
    ```bash
@@ -186,10 +208,11 @@ The frontend is deployed on Vercel. To deploy your own version:
    vercel
    ```
 
-### Backend (pythonanywhere.com)
-The backend can be deployed on pythonanywhere.com, to deploy on Render:
-1. Create a new WebApp. on pythonanywhere.
-2. upload your Django Files.
+### **Backend (PythonAnywhere)**
+
+The backend can be deployed on PythonAnywhere. To deploy:
+1. Create a new WebApp on PythonAnywhere.
+2. Upload your Django files.
 3. Set environment variables for your database and Django settings.
 4. Deploy!
 
@@ -263,7 +286,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-### **Key Pages**
+## **Key Pages**
+
 - **Dashboard**: Overview of AI agent performance, task completion rates, and customer satisfaction.
 - **Agents**: Customize AI agent behavior, workflows, and integrations.
 - **Call Logs**: View detailed logs of all outbound and inbound calls.
