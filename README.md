@@ -16,7 +16,7 @@ SmartLine provides two main functionalities for call automation:
   
 2. **Outbound Calls**: Manages outbound calls for lead generation, order status checking, and order confirmation.
 
-  <img src="outbound.png" alt="Outbound" style="max-width: 48%; height: auto; transform: scale(0.6);">
+<img src="outbound" alt="outbound" width="700">
 
 
 Both systems are built using **FastAPI**, **Twilio**, and **OpenAI** for real-time voice interactions.
