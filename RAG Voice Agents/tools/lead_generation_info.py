@@ -1,4 +1,3 @@
-from langchain.llms import OpenAI
 from langchain_openai import ChatOpenAI
 
 from langchain.prompts import PromptTemplate
@@ -13,27 +12,15 @@ load_dotenv()
 llm = ChatOpenAI(model="gpt-4o-mini-2024-07-18", temperature=0)
 
 
-extract_prompt = PromptTemplate(
-    input_variables=["conversation"],
-    template="""You are an AI specialized in extracting names and phone numbers from text. 
-    Carefully analyze the following conversation and provide the customer's name and phone number in the format: 
-    'Name: <name>, Phone: <phone>'.
-    
-    Conversation:
-    {conversation}
-    """
-)
 
 # Conversation Summarizer
 summarize_prompt = PromptTemplate(
     input_variables=["conversation"],
-    template="""You are an AI specialized in summarizing conversations. 
-    Provide a concise yet thorough summary of the following conversation,
-    focusing on key details, the customer's intent, and important requests.
+    template="""Summarize the following conversation in one sentence, focusing on the main key points discussed.
 
-    Conversation:
-    {conversation}
-    """
+Conversation:
+{conversation}
+"""
 )
 
 # Lead Evaluator
@@ -45,53 +32,41 @@ The output is an integer between 1 and 5.
 
 Conversation:
 {conversation}
+
+lead score (an Integer between 1 and 5):
 """
 )
 
 
-extract_chain = LLMChain(llm=llm, prompt=extract_prompt)
 
-summarize_chain = LLMChain(llm=llm, prompt=summarize_prompt)
+summarize_chain =summarize_prompt | llm
 
-evaluate_chain = LLMChain(llm=llm, prompt=evaluate_prompt)
+evaluate_chain = evaluate_prompt | llm
 
-def process_lead_conversation(conversation):
 
-    name_phone = extract_chain.run(conversation)
+def structure_conversation(conversation):
+    """
+    Formats the conversation into a structured string for the hangup agent.
     
-    summary = summarize_chain.run(conversation)
+    Args:
+        conversation (list): A list of dictionaries containing 'role' and 'message' keys.
     
-    lead_score = evaluate_chain.run(conversation)
-
-    try:
-        lead_score = float(lead_score)
-    except ValueError:
-        lead_score = 0.0
-
-    lead_score=min(max(lead_score, 0), 5) 
-    
-    if 'Name:' in name_phone and 'Phone:' in name_phone:
-        name = name_phone.split("Name: ")[1].split(", Phone: ")[0]
-        phone = name_phone.split("Phone: ")[1]
-    else:
-        name = ""
-        phone = ""
-    lead_info={
-        "name": name,
-        "phone": phone,
-        "summary": summary,
-        "lead_score": lead_score
-    }
-
-
-    upload_row_to_google_sheet(lead_info["name"], lead_info["phone"],lead_info.get("time","unknown"),lead_info.get("time duration","unknown"), lead_info["summary"], lead_info["lead_score"])
+    Returns:
+        str: A structured string representation of the conversation.
+    """
 
     
-    return lead_info
+    structured_conversation = []
+    
+    for turn in conversation:
+        role = turn['role'].capitalize()  
+        message = turn['message'].strip()  
+        structured_conversation.append(f"{role}: {message}")
+    
+    return "\n".join(structured_conversation)
 
 
-
-def upload_row_to_google_sheet(name, phone, summary, lead_score):
+def upload_row_to_google_sheet(name, phone, time, time_duration, summary, lead_score):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
     creds = ServiceAccountCredentials.from_json_keyfile_name(r'C:\Users\MOUAD\Desktop\projects\AI call center\RAG Voice Agents\RAG Voice Agents\credentialsH.json', scope)
@@ -102,16 +77,59 @@ def upload_row_to_google_sheet(name, phone, summary, lead_score):
 
     worksheet = sheet.get_worksheet(0)
 
-    worksheet.append_row([name, phone, summary, lead_score])
+    worksheet.append_row([name, phone, time, time_duration, summary, lead_score])
 
 
+def process_lead_conversation(conversation, name, phone):
+    structured_conversation = structure_conversation(conversation)
+
+    
+    summary = summarize_chain.invoke(structured_conversation).content
+    
+    lead_score = evaluate_chain.invoke(structured_conversation).content
+
+    try:
+        lead_score = float(lead_score)
+
+        
+    except ValueError:
+        lead_score = 0.0
+
+    except Exception as e:
+        lead_score = 0.0
+        print(f"Error: {e}")
 
 
-conversation = """
-Customer: Hi, my name is John Doe. I'm interested in your product.
-Agent: Great! Can I have your phone number?
-Customer: Sure, it's 123-456-7890.
-Agent: What are you looking for in our product?
-Customer: I need something affordable and reliable.
-"""
+    lead_score = min(max(lead_score, 0), 5) 
+    
 
+    lead_info = {
+        "name": name,
+        "phone": phone,
+        "time": "unknown",
+        "time_duration": "unknown",
+        "summary": summary,
+        "lead_score": lead_score
+
+    }
+    try:
+        upload_row_to_google_sheet(lead_info["name"], lead_info["phone"], lead_info["time"], lead_info["time_duration"], lead_info["summary"], lead_info["lead_score"])
+    except Exception as e:
+        print(f"Error uploading to Google Sheets: {e}")
+
+    return lead_info
+
+#conversation = [
+#    {"role": "customer", "message": "Hi, my name is John Doe. I'm interested in your product."},
+#    {"role": "agent", "message": "Great! Can I have your phone number?"},
+#    {"role": "customer", "message": "Sure, it's 123-456-7890."},
+#    {"role": "agent", "message": "What are you looking for in our product?"},
+#    {"role": "customer", "message": "I need something affordable and reliable."},
+#    {"role": "agent", "message": "we have everything you need"},
+#    {"role": "customer", "message": "thank you im interested"}
+#]
+
+
+#upload_row_to_google_sheet("maouad", "028", "34", "time_duration", "summary", "lead_score")
+#result=process_lead_conversation(conversation,phone="11",name="mouad")
+#print(result)
