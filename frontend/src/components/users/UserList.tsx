@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios, { Axios } from 'axios';
+import axios, { Axios, isAxiosError } from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { User2, XCircle, Trash2, Edit, Plus } from 'lucide-react';
 import Modal from '../Modal';
@@ -63,8 +63,8 @@ export function UserList() {
     if (!selectedUser) return;
 
     try {
-      const response = await axios.put(
-        `https://d0rgham.pythonanywhere.com/api/clients/${selectedUser.id}/`,
+      const response = await axiosInstance.put(
+        `api/clients/${selectedUser.id}/`,
         formData
       );
       setUsers(users.map((user) => (user.id === selectedUser.id ? response.data : user)));
@@ -79,7 +79,7 @@ export function UserList() {
     if (!selectedUser) return;
 
     try {
-      await axios.delete(`https://d0rgham.pythonanywhere.com/api/clients/${selectedUser.id}/`);
+      await axiosInstance.delete(`api/clients/${selectedUser.id}/`);
       setUsers(users.filter((user) => user.id !== selectedUser.id));
       setIsModalOpen(false);
     } catch (error) {
@@ -95,7 +95,7 @@ export function UserList() {
     }
   
     try {
-      const response = await axios.post('https://d0rgham.pythonanywhere.com/api/clients/', formData);
+      const response = await axiosInstance.post('api/clients/', formData);
       setUsers([...users, response.data]);
       setIsCreating(false);
       setIsModalOpen(false);
@@ -109,7 +109,7 @@ export function UserList() {
       console.error('Error creating user:', error);
   
       // Log the error response from the server
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         console.error('Server response:', error.response.data);
       }
   

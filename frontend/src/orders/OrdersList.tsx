@@ -3,14 +3,14 @@ import { ShoppingCart } from 'lucide-react';
 import axios from 'axios';
 import Modal from '../components/Modal';
 import {X} from 'lucide-react';
+
 import axiosInstance from '../axios';
 
 interface Order {
   OrderID: number;
-  LeadID: number;
   ProductID: number;
   Quantity: number;
-  TotalAmount: number;
+  Price: number;
   PaymentStatus: string;
   OrderStatus: string;
 }
@@ -67,11 +67,10 @@ const OrdersList = () => {
               </div>
               <div>
                 <p className="font-medium">Order #{order.OrderID}</p>
-                <p className="text-sm text-gray-500">Lead ID: {order.LeadID}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="font-medium">${order.TotalAmount}</p>
+              <p className="font-medium">${order.Price}</p>
               <p
                 className={`text-sm ${
                   order.OrderStatus === 'Shipped' ? 'text-green-500' :
@@ -94,7 +93,7 @@ const OrdersList = () => {
               <p><strong>Lead ID:</strong> {selectedOrder.LeadID}</p>
               <p><strong>Product ID:</strong> {selectedOrder.ProductID}</p>
               <p><strong>Quantity:</strong> {selectedOrder.Quantity}</p>
-              <p><strong>Total Amount:</strong> ${selectedOrder.TotalAmount}</p>
+              <p><strong>Total Amount:</strong> ${selectedOrder.Price}</p>
               <p><strong>Payment Status:</strong> {selectedOrder.PaymentStatus}</p>
               <p><strong>Order Status:</strong> {selectedOrder.OrderStatus}</p>
             </div>

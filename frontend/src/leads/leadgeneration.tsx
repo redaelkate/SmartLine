@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { User, Phone, Mail, Briefcase, Building, Clipboard, BarChart, Check } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import axiosInstance from "../axios";
 
 const LeadGenerationPage = () => {
   const [lead, setLead] = useState({
@@ -9,12 +10,6 @@ const LeadGenerationPage = () => {
     LastName: "",
     Email: "",
     PhoneNumber: "",
-    CompanyName: "",
-    JobTitle: "",
-    LeadSource: "",
-    LeadStatus: "New",
-    Summary: "",
-    Rate: 0,
   });
 
   const handleInputChange = (e) => {
@@ -25,7 +20,7 @@ const LeadGenerationPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://d0rgham.pythonanywhere.com/api/leads/", lead);
+      const response = await axiosInstance.post("api/leads/", lead);
       console.log("Lead creation response:", response.data);
       toast.success("Lead created successfully!");
       setLead({
@@ -33,12 +28,7 @@ const LeadGenerationPage = () => {
         LastName: "",
         Email: "",
         PhoneNumber: "",
-        CompanyName: "",
-        JobTitle: "",
-        LeadSource: "",
-        LeadStatus: "New",
-        Summary: "",
-        Rate: 0,
+
       });
     } catch (error) {
       console.error("Error creating lead:", error);
@@ -128,112 +118,7 @@ const LeadGenerationPage = () => {
             </div>
           </div>
 
-          {/* Company Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Company Name</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Building className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="CompanyName"
-                value={lead.CompanyName}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Acme Corp"
-              />
-            </div>
-          </div>
 
-          {/* Job Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Job Title</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Briefcase className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="JobTitle"
-                value={lead.JobTitle}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Software Engineer"
-              />
-            </div>
-          </div>
-
-          {/* Lead Source */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Lead Source</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Clipboard className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="LeadSource"
-                value={lead.LeadSource}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Website, Referral, etc."
-              />
-            </div>
-          </div>
-
-          {/* Lead Status */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Lead Status</label>
-            <div className="mt-1">
-              <select
-                name="LeadStatus"
-                value={lead.LeadStatus}
-                onChange={handleInputChange}
-                className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="New">New</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Qualified">Qualified</option>
-                <option value="Closed">Closed</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Summary */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Summary</label>
-            <div className="mt-1">
-              <textarea
-                name="Summary"
-                value={lead.Summary}
-                onChange={handleInputChange}
-                rows={4}
-                className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Add a summary of the lead..."
-              />
-            </div>
-          </div>
-
-          {/* Lead Score */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Lead Score</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <BarChart className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="number"
-                name="leadScore"
-                value={lead.leadScore}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="0-100"
-                min="0"
-                max="10"
-              />
-            </div>
-          </div>
 
           {/* Submit Button */}
           <div className="flex justify-end">

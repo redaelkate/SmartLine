@@ -12,10 +12,7 @@ interface Lead {
   LastName: string;
   Email: string;
   PhoneNumber: string;
-  CompanyName: string;
-  JobTitle: string;
-  LeadSource: string;
-  LeadStatus: string;
+  Status: string;
 }
 
 const LeadsList = () => {
@@ -67,14 +64,13 @@ const LeadsList = () => {
               </div>
               <div>
                 <p className="font-medium">{`${lead.FirstName} ${lead.LastName}`}</p>
-                <p className="text-sm text-gray-500">Source: {lead.LeadSource}</p>
+                <p className="text-sm text-gray-500">Email: {lead.Email}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className={`text-sm font-medium ${lead.LeadStatus === 'New' ? 'text-red-500' : 'text-yellow-500'}`}>
-                {lead.LeadStatus}
+              <p className={`text-sm font-medium ${lead.Status === 'New' ? 'text-red-500' : 'text-yellow-500'}`}>
+                {lead.Status}
               </p>
-              <p className="text-sm text-gray-500">{lead.CompanyName}</p>
             </div>
           </div>
         ))}
@@ -91,11 +87,7 @@ const LeadsList = () => {
               <p><strong>Name:</strong> {selectedLead.FirstName} {selectedLead.LastName}</p>
               <p><strong>Email:</strong> {selectedLead.Email}</p>
               <p><strong>Phone:</strong> {selectedLead.PhoneNumber}</p>
-              <p><strong>Company:</strong> {selectedLead.CompanyName}</p>
-              <p><strong>Job Title:</strong> {selectedLead.JobTitle}</p>
-              <p><strong>Lead Source:</strong> {selectedLead.LeadSource}</p>
-              <p><strong>Lead Status:</strong> {selectedLead.LeadStatus}</p>
-            </div>
+              </div>
           </div>
         )}
       </Modal>

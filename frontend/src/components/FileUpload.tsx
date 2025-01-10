@@ -4,6 +4,7 @@ import { Upload } from 'lucide-react';
 interface FileUploadProps {
   accept: string;
   label: string;
+  disabled?: boolean;
   onUpload: (file: File) => Promise<void>; // onUpload is a function that returns a Promise
 }
 
@@ -11,45 +12,50 @@ const FileUpload: React.FC<FileUploadProps> = ({ accept, label, onUpload }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-
+  const [isUploadedOrdragged, setIsUploadedOrdragged] = useState(false);
+  // Handle file selection via input
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-        setFile(file);
-        setUploadMessage(null); // Reset upload message when a new file is selected
-      } else {
-        setUploadMessage('Invalid file type. Please upload a CSV file.');
-        setFile(null); // Clear the file if it's invalid
-      }
+      validateAndSetFile(file);
     }
   };
 
+  // Handle file drop
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file) {
-      if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-        setFile(file);
-        setUploadMessage(null); // Reset upload message when a new file is dropped
-      } else {
-        setUploadMessage('Invalid file type. Please upload a CSV file.');
-        setFile(null); // Clear the file if it's invalid
-      }
+      setIsUploadedOrdragged(true);
+      validateAndSetFile(file);
+      console.log('File dropped:', file.name); // Log the dropped file to the console
     }
   };
 
+  // Validate and set the file
+  const validateAndSetFile = (file: File) => {
+    if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+      setFile(file);
+      setUploadMessage(null); // Reset upload message when a new file is selected or dropped
+    } else {
+      setUploadMessage('Invalid file type. Please upload a CSV file.');
+      setFile(null); // Clear the file if it's invalid
+    }
+  };
+
+  // Handle file upload
   const handleUpload = async () => {
     if (file) {
       setIsUploading(true);
       setUploadMessage(null);
 
       try {
+        setIsUploadedOrdragged(true);
         await onUpload(file); // Call the onUpload function passed as a prop
         setUploadMessage('File uploaded successfully!');
       } catch (error) {
         console.error('Error uploading file:', error);
-        setUploadMessage(error.message || 'Failed to upload file. Please try again.');
+        setUploadMessage(error instanceof Error ? error.message : 'Failed to upload file. Please try again.');
       } finally {
         setIsUploading(false);
       }
@@ -58,6 +64,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ accept, label, onUpload }) => {
     }
   };
 
+  // Reset the file and upload message
   const handleReset = () => {
     setFile(null);
     setUploadMessage(null);
@@ -65,6 +72,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ accept, label, onUpload }) => {
 
   return (
     <div>
+      {/* File Drop Zone */}
       <div
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
@@ -87,7 +95,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ accept, label, onUpload }) => {
       </div>
 
       {/* Upload Button (Visible only when a file is selected) */}
-      {file && (
+      {isUploadedOrdragged && (
         <div className="flex gap-2 mt-4">
           <button
             onClick={handleUpload}

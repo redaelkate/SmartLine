@@ -16,6 +16,9 @@ const LeadsView = () => {
       const response = await fetch('https://d0rgham.pythonanywhere.com/api/upload/leads/', {
         method: 'POST',
         body: formData,
+        headers: {
+          Authorization: `Token ${localStorage.getItem('token')}`,
+        },
       });
 
       if (!response.ok) {
@@ -33,6 +36,12 @@ const LeadsView = () => {
     }
   };
 
+
+  const handleLeadsGeneration = async () => {
+    alert('Begin the lead generation process.......');
+
+  };
+
   return (
     <div className="space-y-6 p-4">
       <div className="bg-white rounded-lg shadow-md p-6">
@@ -45,6 +54,9 @@ const LeadsView = () => {
           disabled={isUploading}
         />
         {isUploading && <p className="text-sm text-gray-500 mt-2">Uploading...</p>}
+        <div className="flex justify-center mt-4">
+          <button onClick={handleLeadsGeneration} className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Start Leads Generation</button>
+        </div>
       </div>
       <LeadsList />
     </div>
