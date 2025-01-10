@@ -1,51 +1,122 @@
 [
     {
       "id": 1,
-      "name": "Whey Protein",
-      "price": 29.99,
+      "name": "Nike Air Max",
+      "price": 800,
       "stock": 15
     },
     {
       "id": 2,
-      "name": "BCAA",
-      "price": 19.99,
+      "name": "Adidas Ultraboost",
+      "price": 900,
       "stock": 25
     },
     {
       "id": 3,
-      "name": "Creatine Monohydrate",
-      "price": 24.99,
+      "name": "Levi’s Jeans",
+      "price": 450,
       "stock": 0
     },
     {
       "id": 4,
-      "name": "Pre-Workout",
-      "price": 34.99,
-      "stock": 10
-    },
-    {
-      "id": 5,
-      "name": "Multivitamin",
-      "price": 14.99,
+      "name": "Zara T-Shirts",
+      "price": 120,
       "stock": 50
     },
     {
-      "id": 6,
-      "name": "Omega-3 Fish Oil",
-      "price": 19.99,
+      "id": 5,
+      "name": "H&M Winter Jackets",
+      "price": 600,
       "stock": 30
     },
     {
+      "id": 6,
+      "name": "iPhone 14 Pro",
+      "price": 12000,
+      "stock": 10
+    },
+    {
       "id": 7,
-      "name": "Glutamine",
-      "price": 21.99,
-      "stock": 20
+      "name": "Samsung Galaxy S23",
+      "price": 9500,
+      "stock": 15
     },
     {
       "id": 8,
-      "name": "Casein Protein",
-      "price": 32.99,
+      "name": "Amazon Echo Dot",
+      "price": 400,
+      "stock": 40
+    },
+    {
+      "id": 9,
+      "name": "Sony Headphones",
+      "price": 3200,
+      "stock": 20
+    },
+    {
+      "id": 10,
+      "name": "HP Laptop",
+      "price": 7800,
+      "stock": 5
+    },
+    {
+      "id": 11,
+      "name": "IKEA Sofa Bed",
+      "price": 2500,
+      "stock": 10
+    },
+    {
+      "id": 12,
+      "name": "KitchenAid Mixer",
+      "price": 3000,
+      "stock": 15
+    },
+    {
+      "id": 13,
+      "name": "Dyson Vacuum",
+      "price": 4500,
+      "stock": 5
+    },
+    {
+      "id": 14,
+      "name": "Philips Air Fryer",
+      "price": 1200,
+      "stock": 20
+    },
+    {
+      "id": 15,
+      "name": "Modern Coffee Table",
+      "price": 1800,
       "stock": 12
+    },
+    {
+      "id": 16,
+      "name": "Chanel Hydra Beauty Cream",
+      "price": 1000,
+      "stock": 20
+    },
+    {
+      "id": 17,
+      "name": "Estée Lauder Foundation",
+      "price": 600,
+      "stock": 30
+    },
+    {
+      "id": 18,
+      "name": "MAC Lipstick",
+      "price": 200,
+      "stock": 25
+    },
+    {
+      "id": 19,
+      "name": "Dior Sauvage",
+      "price": 1500,
+      "stock": 15
+    },
+    {
+      "id": 20,
+      "name": "L’Oréal Serum",
+      "price": 300,
+      "stock": 35
     }
-  ]
-  
+]
