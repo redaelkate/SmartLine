@@ -5,15 +5,13 @@ import { toast } from "react-toastify";
 
 const orderGenerationPage = () => {
   const [order, setorder] = useState({
-    FirstName: "",
-    LastName: "",
-    Email: "",
-    PhoneNumber: "",
-    CompanyName: "",
-    JobTitle: "",
-    orderstatus: "New",
-    Summary: "",
-    Rate: 0,
+    ProductName: "",
+    Price: 0,
+    Description: "",
+    ClientPhone: "",
+    ClientName: "",
+    Quantity: 0,
+    
   });
 
   const handleInputChange = (e) => {
@@ -28,16 +26,12 @@ const orderGenerationPage = () => {
       console.log("order creation response:", response.data);
       toast.success("order created successfully!");
       setorder({
-        FirstName: "",
-        LastName: "",
-        Email: "",
-        PhoneNumber: "",
-        CompanyName: "",
-        JobTitle: "",
-        ordersource: "",
-        orderstatus: "New",
-        Summary: "",
-        Rate: 0,
+        ProductName: "",
+        Price: 0,
+        Description: "",
+        ClientPhone: "",
+        ClientName: "",
+        Quantity: 0,
       });
     } catch (error) {
       console.error("Error creating order:", error);
@@ -53,28 +47,11 @@ const orderGenerationPage = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-          {/* First Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">First Name</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="FirstName"
-                value={order.FirstName}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="John"
-                required
-              />
-            </div>
-          </div>
+          
 
           {/* Last Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Last Name</label>
+            <label className="block text-sm font-medium text-gray-700">Client Name</label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <User className="h-5 w-5 text-gray-400" />
@@ -82,7 +59,7 @@ const orderGenerationPage = () => {
               <input
                 type="text"
                 name="LastName"
-                value={order.LastName}
+                value={order.ClientName}
                 onChange={handleInputChange}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Doe"
@@ -91,27 +68,11 @@ const orderGenerationPage = () => {
             </div>
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="email"
-                name="Email"
-                value={order.Email}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="john.doe@example.com"
-              />
-            </div>
-          </div>
+         
 
           {/* Phone Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-700">Client Phone number</label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Phone className="h-5 w-5 text-gray-400" />
@@ -119,64 +80,10 @@ const orderGenerationPage = () => {
               <input
                 type="tel"
                 name="PhoneNumber"
-                value={order.PhoneNumber}
+                value={order.ClientPhone}
                 onChange={handleInputChange}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="+1 (555) 123-4567"
-              />
-            </div>
-          </div>
-
-          {/* Company Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Company Name</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Building className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="CompanyName"
-                value={order.CompanyName}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Acme Corp"
-              />
-            </div>
-          </div>
-
-          {/* Job Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Job Title</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Briefcase className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="JobTitle"
-                value={order.JobTitle}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Software Engineer"
-              />
-            </div>
-          </div>
-
-          {/* order Source */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">order Source</label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Clipboard className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="ordersource"
-                value={order.ordersource}
-                onChange={handleInputChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Website, Referral, etc."
               />
             </div>
           </div>
@@ -187,7 +94,7 @@ const orderGenerationPage = () => {
             <div className="mt-1">
               <select
                 name="orderstatus"
-                value={order.orderstatus}
+                value={order.ProductName}
                 onChange={handleInputChange}
                 className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
