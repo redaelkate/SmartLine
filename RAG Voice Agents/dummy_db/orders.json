@@ -1,43 +1,50 @@
 [
-    {
+  {
       "order_id": "1001",
-      "customer": "John Doe",
+      "product_name": "Wireless Mouse",
+      "order_date": "2025-01-01",
       "status": "Processed"
-    },
-    {
+  },
+  {
       "order_id": "1002",
-      "customer": "Jane Smith",
+      "product_name": "Laptop Sleeve",
+      "order_date": "2025-01-02",
       "status": "Pending"
-    },
-    {
+  },
+  {
       "order_id": "1003",
-      "customer": "Michael Johnson",
+      "product_name": "Gaming Keyboard",
+      "order_date": "2025-01-03",
       "status": "Shipped"
-    },
-    {
+  },
+  {
       "order_id": "1004",
-      "customer": "Emily Davis",
+      "product_name": "Noise-Cancelling Headphones",
+      "order_date": "2025-01-04",
       "status": "Cancelled"
-    },
-    {
+  },
+  {
       "order_id": "1005",
-      "customer": "Sarah Miller",
+      "product_name": "Portable Charger",
+      "order_date": "2025-01-05",
       "status": "Delivered"
-    },
-    {
+  },
+  {
       "order_id": "1006",
-      "customer": "James Wilson",
+      "product_name": "Smartwatch",
+      "order_date": "2025-01-06",
       "status": "Pending"
-    },
-    {
+  },
+  {
       "order_id": "1007",
-      "customer": "Linda Moore",
+      "product_name": "Bluetooth Speaker",
+      "order_date": "2025-01-07",
       "status": "Processed"
-    },
-    {
+  },
+  {
       "order_id": "1008",
-      "customer": "David Brown",
+      "product_name": "Action Camera",
+      "order_date": "2025-01-08",
       "status": "Shipped"
-    }
-  ]
-  
+  }
+]
