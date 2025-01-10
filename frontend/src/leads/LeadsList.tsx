@@ -4,6 +4,7 @@ import axios from 'axios';
 import { XCircle } from 'lucide-react';
 import Modal from '../components/Modal';
 import { toast } from 'react-toastify';
+import axiosInstance from '../axios';
 
 interface Lead {
   LeadID: number;
@@ -27,7 +28,7 @@ const LeadsList = () => {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        const response = await axios.get('https://d0rgham.pythonanywhere.com/api/leads/');
+        const response = await axiosInstance.get('api/leads/');
         setLeads(response.data);
       } catch (err) {
         setError('Failed to fetch leads');

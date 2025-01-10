@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { Axios } from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { User2, XCircle, Trash2, Edit, Plus } from 'lucide-react';
 import Modal from '../Modal';
+import axiosInstance from '../../axios';
 
 interface User {
   id: number;
@@ -31,7 +32,7 @@ export function UserList() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://d0rgham.pythonanywhere.com/api/clients/');
+        const response = await axiosInstance.get('api/clients/');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users', error);

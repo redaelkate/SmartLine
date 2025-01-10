@@ -5,7 +5,8 @@ import { QuickActions } from "../components/dashboard/QuickActions";
 import "./Dashboard.css";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
-
+import { Axios } from "axios";
+import axiosInstance from "../axios";
 // Lazy load the CustomChart component
 const CustomChart = lazy(() => import("../components/CustomChart"));
 
@@ -33,7 +34,7 @@ export const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://d0rgham.pythonanywhere.com/api/dashboard-data/");
+        const response = await axiosInstance.get("api/dashboard-data/");
         setDashboardData({
           agentStatus: response.data.agent_status_distribution || [],
           callType: response.data.call_type_distribution || [],

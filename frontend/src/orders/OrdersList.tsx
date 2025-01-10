@@ -3,6 +3,7 @@ import { ShoppingCart } from 'lucide-react';
 import axios from 'axios';
 import Modal from '../components/Modal';
 import {X} from 'lucide-react';
+import axiosInstance from '../axios';
 
 interface Order {
   OrderID: number;
@@ -28,7 +29,7 @@ const OrdersList = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('https://d0rgham.pythonanywhere.com/api/orders/');
+        const response = await axiosInstance.get('api/orders/');
         setOrders(response.data);
       } catch (err) {
         setError('Failed to fetch orders');

@@ -1,6 +1,7 @@
 import React from 'react';
 import FileUpload from '../components/FileUpload';
 import OrdersList from './OrdersList';
+import axiosInstance from '../axios';
 
 const OrdersView = () => {
   const handleFileUpload = async (file: File) => {
@@ -11,6 +12,9 @@ const OrdersView = () => {
       const response = await fetch('https://d0rgham.pythonanywhere.com/api/upload/orders/', {
         method: 'POST',
         body: formData,
+        headers: {
+          Authorization: `Token ${localStorage.getItem('token')}`,
+        },
       });
 
       if (!response.ok) {

@@ -3,7 +3,7 @@ import { ArrowUpRight } from 'lucide-react';
 import axios from 'axios';
 import { useDropzone } from 'react-dropzone';
 import  ExcelJs  from 'exceljs';
-
+import axiosInstance from '../../axios';
 const FileDrop = ({ onFileUpload, fileType, setFileType, handleDownload }) => {
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -84,7 +84,7 @@ export function QuickActions() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://d0rgham.pythonanywhere.com/api/dashboard-data/");
+        const response = await axiosInstance.get("api/dashboard-data/");
         setDashboardData({
           
           agentStatus: response.data.agent_status_distribution || [],
