@@ -61,9 +61,9 @@ The **Inbound Call System** is designed to handle incoming customer support call
 ### **Outbound Call System**
 
 The **Outbound Call System** is used for making automated calls for:
+- Order confirmations.
 - Lead generation.
 - Order status updates.
-- Order confirmations.
 
 #### **Key Features**:
 - Automated outbound calls using Twilio.
