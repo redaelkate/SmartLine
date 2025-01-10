@@ -15,8 +15,8 @@ import argparse
 from helpers.twilio import twilio_stream
 from twilio.twiml.voice_response import VoiceResponse
 from fastapi.responses import Response
-from services.openai_functions import should_hangup
-from ConnectionClosed import ConnectionClosedHandler, execute_on_connection_closed
+from tools.call_agents import should_hangup
+from ConnectionClosed import ConnectionClosedHandler, execute_on_connection_closed,execute_on_connection_closed_lead
 
 
 # Load environment variables from a .env file
@@ -47,7 +47,6 @@ call_sid=None
 transcript = []
 
 
-
 # Set up the logger with the custom handler
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -57,8 +56,9 @@ logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 phone=None
+name=None
 # Add the custom handler to the logger
-handler = ConnectionClosedHandler(execute_on_connection_closed, transcript,phone)
+handler = ConnectionClosedHandler(execute_on_connection_closed_lead, transcript,phone,name)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -84,6 +84,7 @@ uvicorn_logger.addHandler(handler)
 
 async def make_call(phone_number: str):
     global call_sid
+    global phone
     """
     Initiate an outbound call using Twilio.
     """
@@ -97,7 +98,7 @@ async def make_call(phone_number: str):
         </Response>
         """
 
-
+        phone=phone_number
         # Make the outbound call
         call = twilio_client.calls.create(
             twiml=twiml,
@@ -208,7 +209,7 @@ async def handle_media_stream(websocket: WebSocket):
 
                         if response['type'] == 'session.created':
                             logging.info(f"OpenAI WSS connection established. => {stream_sid}")
-                            await send_session_update(openai_ws, VOICE, SYSTEM_MESSAGE["inbound"])
+                            await send_session_update(openai_ws, VOICE, SYSTEM_MESSAGE["outbound"].format(name)) #name is the name of the person to call
 
                         if response['type'] == 'session.updated': 
                             logging.info(f"OpenAI WSS connection updated. => {stream_sid}: {response}")                       
@@ -347,7 +348,7 @@ async def initialize_session(openai_ws):
             "input_audio_format": "g711_ulaw",
             "output_audio_format": "g711_ulaw",
             "voice": VOICE,
-            "instructions": SYSTEM_MESSAGE,
+            "instructions": SYSTEM_MESSAGE["inbound"],
             "modalities": ["text", "audio"],
             "temperature": 0.8,
         }
@@ -361,15 +362,14 @@ async def initialize_session(openai_ws):
 
 if __name__ == "__main__": # python appOutbound.py --call=+18005551212
     parser = argparse.ArgumentParser(description="Run the Twilio AI voice assistant server.")
-    parser.add_argument('--call', default=os.getenv("PHONE_NUMBER_TO"), help="The phone number to call, e.g., '--call=+18005551212'")
+    parser.add_argument('--call', default="+212708279841", help="The phone number to call, e.g., '--call=+18005551212'")
+    parser.add_argument('--name', default="Mouad Ennasiry", help="The name of the person to call, e.g., '--name=Mouad Ennasiry'")
+
     args = parser.parse_args()
 
     phone_number = args.call
-    print(
-        'Our recommendation is to always disclose the use of AI for outbound or inbound calls.\n'
-        'Reminder: All of the rules of TCPA apply even if a call is made by AI.\n'
-        'Check with your counsel for legal and compliance advice.'
-    )
+    name = args.name
+
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(make_call(phone_number))
@@ -383,5 +383,3 @@ if __name__ == "__main__": # python appOutbound.py --call=+18005551212
         # Log the error in case the server fails to start
         logging.error(f"Error: {error}")
         raise error
-
-        
