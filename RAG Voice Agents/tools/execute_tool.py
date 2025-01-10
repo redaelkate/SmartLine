@@ -4,6 +4,7 @@ from tools.search_product_tool import search_product_tool
 from tools.process_order_tool import process_order_tool
 from tools.check_shipping_status_tool import check_shipping_status_tool
 from tools.check_stock_tool import check_stock_tool
+from tools.catalogue_agent import check_catalogue_tool
 import logging
 
 function_mapping = {
@@ -11,6 +12,7 @@ function_mapping = {
     'process_order': process_order_tool,
     'check_shipping_status': check_shipping_status_tool,
     'check_stock': check_stock_tool,
+    'check_catalogue' : check_catalogue_tool
 }
 
 
