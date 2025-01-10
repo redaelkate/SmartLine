@@ -33,7 +33,7 @@ const OrdersView = () => {
         <h2 className="text-lg font-semibold mb-4">Import Orders</h2>
         <FileUpload
           accept=".csv,.xlsx,.xls"
-          label="Upload orders file (CSV or Excel)"
+          label="Upload orders file (CSV or Excel), (after the upload all of the orders will be added to the database and the agent will be launched)"
           onUpload={handleFileUpload} // Pass the upload function as a prop
         />
       </div>

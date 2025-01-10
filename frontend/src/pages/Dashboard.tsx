@@ -197,7 +197,7 @@ export const Dashboard = () => {
           </Suspense>
 
           {/* Average Call Duration by Agent */}
-          <div className="row-span-1 sm:row-span-2 lg:row-span-2 h-full">
+          <div className="row-span-1 sm:row-span-2 lg:row-span-2 h-full w-full">
             <Suspense fallback={<div>Loading Chart...</div>}>
               <CustomChart
                 type="bar"

@@ -13,25 +13,41 @@ import {
   Contact2,
   LogOut,
 } from 'lucide-react';
-
-interface SidebarProps {
-  onNavigate: (page: string) => void;
-}
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../pages/AuthContext'; // Adjust the import path as needed
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
   { icon: Users, label: 'Clients', id: 'users' },
   { icon: Package, label: 'Orders', id: 'orders' },
   { icon: Contact2, label: 'Leads', id: 'leads' },
-  { icon: History, label: 'support', id: 'callHistory' },
-  { icon: Bot, label: 'Agents ', id: 'settings' },
+  { icon: History, label: 'Support', id: 'callHistory' },
+  { icon: Bot, label: 'Agents', id: 'settings' },
 ];
 
-export function Sidebar({ onNavigate }: SidebarProps) {
+export function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const { logout } = useAuth(); // Use the logout function from AuthContext
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const handleNavigation = (id: string) => {
+    if(id === 'settings') {
+      alert("The agents generation and customization is coming soon, thank you for your understanding"); // Navigate to the AI Agent Manager page
+      return;
+    }
+    else{
+      navigate(`/${id}`);
+    }
+     // Navigate to the corresponding route
+  };
+
+  const handleLogout = () => {
+    logout(); // Call the logout function
+    navigate('/login'); // Redirect to the login page
   };
 
   return (
@@ -52,7 +68,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           {menuItems.map((item) => (
             <li key={item.label}>
               <button
-                onClick={() => onNavigate(item.id)}
+                onClick={() => handleNavigation(item.id)}
                 className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors w-full text-left"
               >
                 <item.icon className="w-5 h-5" />
@@ -64,7 +80,10 @@ export function Sidebar({ onNavigate }: SidebarProps) {
       </nav>
 
       <div className="p-4 border-t border-gray-800">
-        <button className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors w-full">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors w-full"
+        >
           <LogOut className="w-5 h-5" />
           {!isCollapsed && <span>Logout</span>}
         </button>
