@@ -3,6 +3,7 @@ from tools.check_shipping_status_tool import check_shipping_status_tool_definiti
 from tools.check_stock_tool import check_stock_tool_definition
 from tools.search_product_tool import search_product_tool_definition
 from tools.process_order_tool import process_order_tool_definition
+from tools.catalogue_agent import check_catalogue_tool_definition
 
 from dotenv import load_dotenv
 import asyncio
@@ -43,7 +44,7 @@ async def send_session_update(openai_ws, voice, system_message):
             "input_audio_transcription": {"model": "whisper-1"},
             "temperature": 0.8,
             "tool_choice": "auto",
-            "tools": [check_shipping_status_tool_definition, check_stock_tool_definition, search_product_tool_definition, process_order_tool_definition]
+            "tools": [check_shipping_status_tool_definition, check_stock_tool_definition, search_product_tool_definition, process_order_tool_definition,check_catalogue_tool_definition]
         }
     }
     await openai_ws.send_json(session_update)
