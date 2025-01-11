@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, Check } from 'lucide-react';
+import Logo from '../assets/Logo.png';
+
 
 interface LoginFormData {
     username: string;
@@ -14,6 +16,7 @@ const Login: React.FC = () => {
         username: '',
         password: '',
     });
+    
     const [error, setError] = useState<string | null>(null);
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -40,9 +43,18 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div
+            className="min-h-screen flex items-center justify-center bg-blue-50 py-12 px-4 sm:px-6 lg:px-8"
+            style={{
+                backgroundImage: 'url()',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
+        >
             <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
-                <h2 className="text-center text-3xl font-extrabold text-gray-900">Login</h2>
+                <h2 className="text-center text-3xl font-extrabold text-gray-900">
+                    <img src={Logo}/>
+                </h2>
                 {error && <p className="text-center text-red-500">{error}</p>}
                 <form onSubmit={handleSubmit} className="mt-8 space-y-6">
                     <div>

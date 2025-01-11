@@ -148,7 +148,7 @@ export const Dashboard = () => {
 
   return (
     <div id="webcrumbs" className="w-full h-full p-4">
-      <div className="bg-white rounded-lg shadow w-full h-full p-4 md:p-6 lg:p-10">
+      <div className="bg-white rounded-lg shadow shadow-gray-400  shadow-2xl w-full h-full p-4 md:p-6 lg:p-10">
         <div className="mb-8">
           <h1 className="text-xl md:text-2xl font-bold text-gray-900 font-title">Dashboard Overview</h1>
           <p className="text-gray-600 mt-1 text-sm md:text-base">Welcome back, Admin</p>

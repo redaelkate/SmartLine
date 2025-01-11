@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Logo from '../assets/Logo.png';
 import {
   LayoutDashboard,
   Users,
@@ -21,7 +22,7 @@ const menuItems = [
   { icon: Users, label: 'Clients', id: 'users' },
   { icon: Package, label: 'Orders', id: 'orders' },
   { icon: Contact2, label: 'Leads', id: 'leads' },
-  { icon: History, label: 'Support', id: 'callHistory' },
+  { icon: History, label: 'Support', id: 'support' },
   { icon: Bot, label: 'Agents', id: 'settings' },
 ];
 
@@ -52,12 +53,12 @@ export function Sidebar() {
 
   return (
     <div
-      className={`flex flex-col h-screen bg-purple-600 text-white font-medium sticky top-0 left-0 transition-all duration-300 ${
-        isCollapsed ? 'w-16' : 'w-64'
-      }`}
+      className={`flex flex-col h-screen  text-gray-900 shadow-md font-medium sticky top-0 left-0 transition-all duration-300 ${
+        isCollapsed ? 'w-20' : 'w-64'
+      }`} style={{ backgroundColor: '#fffbf7' }}
     >
-      <div className="p-5 border-b border-purple-500 flex justify-between items-center">
-        {!isCollapsed && <h1 className="text-xl font-bold">SmartLine</h1>}
+      <div className={`p-5 b order-b border-gray-300 flex justify-${isCollapsed ? 'center' : 'between'} items-center`}>
+        {!isCollapsed &&<img src={Logo} alt="Logo" border="0" className='w-36' />}
         <button onClick={toggleSidebar} className="text-gray-300 hover:text-white">
           {isCollapsed ? '☰' : '✕'}
         </button>
@@ -69,7 +70,7 @@ export function Sidebar() {
             <li key={item.label}>
               <button
                 onClick={() => handleNavigation(item.id)}
-                className="flex items-center gap-3 px-4 py-3 text-white font-bold hover:bg-gray-800 rounded-lg transition-colors w-full text-left"
+                className="flex items-center text-xl gap-3 px-4 py-3 text-gray-600 font-bold hover:bg-orange-400 hover:text-purple-800  00 rounded-lg transition-colors w-full text-left"
               >
                 <item.icon className="w-5 h-5" />
                 {!isCollapsed && <span>{item.label}</span>}
@@ -79,10 +80,10 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-purple-500">
+      <div className="p-4 border-t border-gray-500">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors w-full"
+          className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-orange-100 rounded-lg transition-colors w-full"
         >
           <LogOut className="w-5 h-5" />
           {!isCollapsed && <span>Logout</span>}

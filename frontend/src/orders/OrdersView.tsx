@@ -36,7 +36,7 @@ const OrdersView = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <div className="bg-white rounded-lg shadow-md p-6">
         <OrderGenerationPage />
         <h2 className="text-lg font-semibold mb-4">Import Orders</h2>
