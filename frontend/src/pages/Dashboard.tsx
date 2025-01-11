@@ -105,13 +105,13 @@ export const Dashboard = () => {
 
   // Define a vibrant and accessible color palette
   const chartColors = [
-    "#FF6384", // Pink
+    "#F140E9", // Pink
     "#36A2EB", // Blue
-    "#FFCE56", // Yellow
-    "#4BC0C0", // Teal
-    "#9966FF", // Purple
+    "#E6D74C", // Yellow
+    "#4CE678", // Teal
+    "#9333EA", // Purple
     "#FF9F40", // Orange
-    "#C9CBCF", // Gray
+    "#4CE678", // Gray
   ];
 
   // Chart options with attractive colors

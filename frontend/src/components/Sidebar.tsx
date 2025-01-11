@@ -52,11 +52,11 @@ export function Sidebar() {
 
   return (
     <div
-      className={`flex flex-col h-screen bg-gray-900 text-white sticky top-0 left-0 transition-all duration-300 ${
+      className={`flex flex-col h-screen bg-purple-600 text-white font-medium sticky top-0 left-0 transition-all duration-300 ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
     >
-      <div className="p-5 border-b border-gray-800 flex justify-between items-center">
+      <div className="p-5 border-b border-purple-500 flex justify-between items-center">
         {!isCollapsed && <h1 className="text-xl font-bold">SmartLine</h1>}
         <button onClick={toggleSidebar} className="text-gray-300 hover:text-white">
           {isCollapsed ? '☰' : '✕'}
@@ -69,7 +69,7 @@ export function Sidebar() {
             <li key={item.label}>
               <button
                 onClick={() => handleNavigation(item.id)}
-                className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors w-full text-left"
+                className="flex items-center gap-3 px-4 py-3 text-white font-bold hover:bg-gray-800 rounded-lg transition-colors w-full text-left"
               >
                 <item.icon className="w-5 h-5" />
                 {!isCollapsed && <span>{item.label}</span>}
@@ -79,7 +79,7 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-gray-800">
+      <div className="p-4 border-t border-purple-500">
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors w-full"

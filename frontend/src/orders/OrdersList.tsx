@@ -90,11 +90,10 @@ const OrdersList = () => {
             <div className='flex justify-between'><h3 className="text-xl font-semibold mb-4">Order Details </h3> <X className='cursor-pointer' onClick={()=>setIsModalOpen(false)}/></div>
             <div className="space-y-2">
               <p><strong>Order ID:</strong> {selectedOrder.OrderID}</p>
-              <p><strong>Lead ID:</strong> {selectedOrder.LeadID}</p>
+              <p><strong>Client Name:</strong> {selectedOrder.ClientName}</p>
               <p><strong>Product ID:</strong> {selectedOrder.ProductID}</p>
               <p><strong>Quantity:</strong> {selectedOrder.Quantity}</p>
               <p><strong>Total Amount:</strong> ${selectedOrder.Price}</p>
-              <p><strong>Payment Status:</strong> {selectedOrder.PaymentStatus}</p>
               <p><strong>Order Status:</strong> {selectedOrder.OrderStatus}</p>
             </div>
           </div>

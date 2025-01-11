@@ -12,16 +12,16 @@ const orderGenerationPage = () => {
     ClientPhone: "",
     ClientName: "",
     Quantity: 0,
-    Status: "Processing",
+    OrderID: 0,
     
   });
 
-  const [products, setProducts] = useState<{ ProductID: number; ProductName: string }[]>([]);
+  const [products, setProducts] = useState([]);
   const fetchProducts = async () => {
     try {
       const response = await axiosInstance.get("api/products/");
       console.log("Products:", response.data);
-      setProducts(response.data.map((product: { ProductID: number; ProductName: string }) => ({ ProductID: product.ProductID, ProductName: product.ProductName })));
+      setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
       toast.error("Failed to fetch products. Please try again.");
@@ -35,6 +35,16 @@ const orderGenerationPage = () => {
     const { name, value } = e.target;
     setorder((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handlePhoneChange = (e) => {
+    const { name, value } = e.target;
+    setorder((prev) => ({ ...prev, ClientPhone: value }));
+  }
+
+  const handleNameChange = (e) => {
+    const { name, value } = e.target;
+    setorder((prev) => ({ ...prev, ClientName: value }));
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +60,7 @@ const orderGenerationPage = () => {
         ClientPhone: "",
         ClientName: "",
         Quantity: 0,
-        Status: "",
+        OrderID: 0,
       });
     } catch (error) {
       console.error("Error creating order:", error);
@@ -79,7 +89,7 @@ const orderGenerationPage = () => {
                 type="text"
                 name="LastName"
                 value={order.ClientName}
-                onChange={handleInputChange}
+                onChange={handleNameChange}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Doe"
                 required
@@ -100,7 +110,7 @@ const orderGenerationPage = () => {
                 type="tel"
                 name="PhoneNumber"
                 value={order.ClientPhone}
-                onChange={handleInputChange}
+                onChange={handlePhoneChange}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="+1 (555) 123-4567"
               />
@@ -116,11 +126,11 @@ const orderGenerationPage = () => {
               </div>
               <select 
                 name="ProductName"
-                value={order.ProductName}
+                value={order.ProductID}
                 onChange={handleInputChange}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" >
                 {products.map((product) => (
-                  <option key={product.ProductID} value={product.ProductName} onClick={()=>setorder((prev) => ({ ...prev, ProductID: product.ProductID }))}>
+                  <option key={product.id} value={product.name} onClick={()=>setorder((prev) => ({ ...prev, ProductID: product.id }))}>
                     {product.name}
                   </option>
                 ))}
