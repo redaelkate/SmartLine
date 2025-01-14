@@ -38,7 +38,7 @@ function AppContent() {
             <main className="flex-1 overflow-y-auto p-4">
                 <Routes>
                     {/* Public Routes */}
-                    <Route path="/login" element={<Login />} />
+                    {!user && <Route path="/login" element={<Login />} />}
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
                     {/* Protected Routes */}
