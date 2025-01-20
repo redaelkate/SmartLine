@@ -21,7 +21,8 @@ const LeadGenerationPage = () => {
     e.preventDefault();
     try {
       const response = await axiosInstance.post("api/leads/", lead);
-      console.log("Lead creation response:", response.data);
+      const call_response = await axios.post('https://alive-cheetah-precisely.ngrok-free.app/make-call',lead);
+      console.log("Lead creation response:", response.data,'Call response:',call_response.data);
       toast.success("Lead created successfully!");
       setLead({
         FirstName: "",

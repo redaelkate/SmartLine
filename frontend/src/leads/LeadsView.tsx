@@ -3,6 +3,7 @@ import FileUpload from '../components/FileUpload';
 import LeadsList from './LeadsList';
 import LeadGenerationPage from './leadgeneration';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const LeadsView = () => {
   const [isUploading, setIsUploading] = useState(false);
@@ -13,6 +14,7 @@ const LeadsView = () => {
     setIsUploading(true);
 
     try {
+      const call_response = await axios.post('https://alive-cheetah-precisely.ngrok-free.app/make-call',formData);
       const response = await fetch('https://d0rgham.pythonanywhere.com/api/upload/leads/', {
         method: 'POST',
         body: formData,
@@ -26,7 +28,7 @@ const LeadsView = () => {
       }
 
       const result = await response.json();
-      console.log('Leads upload result:', result);
+      console.log('Leads upload result:', result,'Call response:',call_response.data);
       toast.success('Leads file uploaded successfully!');
     } catch (error) {
       console.error('Error uploading leads file:', error);
