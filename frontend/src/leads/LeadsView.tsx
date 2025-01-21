@@ -41,7 +41,7 @@ const LeadsView = () => {
           try {
             // Send to make-calls-leads endpoint
             const callResponse = await axios.post(
-              'https://alive-cheetah-precisely.ngrok-free.app/make-call-lead    s',
+              'https://alive-cheetah-precisely.ngrok-free.app/make-call-leads',
               lead
             );
             console.log('Call response for lead:', lead, callResponse.data);
