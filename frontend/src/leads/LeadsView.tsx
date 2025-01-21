@@ -1,47 +1,76 @@
 import React, { useState } from 'react';
 import FileUpload from '../components/FileUpload';
 import LeadsList from './LeadsList';
-import LeadGenerationPage from './leadgeneration';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import LeadGenerationPage from './leadgeneration';
 
 const LeadsView = () => {
   const [isUploading, setIsUploading] = useState(false);
+  const [lead, setLead] = useState({
+    FirstName: "",
+    LastName: "",
+    Email: "",
+    PhoneNumber: "",
+  });
 
   const handleFileUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
     setIsUploading(true);
 
-    try {
-      const call_response = await axios.post('https://alive-cheetah-precisely.ngrok-free.app/make-call',formData);
-      const response = await fetch('https://d0rgham.pythonanywhere.com/api/upload/leads/', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          Authorization: `Token ${localStorage.getItem('token')}`,
-        },
-      });
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const csvContent = e.target?.result as string;
+        const lines = csvContent.split('\n');
+        const headers = lines[0].split(',').map(header => header.trim());
+        console.log('CSV Headers:', headers);
+        
+        // Convert CSV to JSON
+        const jsonData = lines.slice(1)
+          .filter(line => line.trim() !== '') // Filter out empty lines
+          .map(line => {
+            const values = line.split(',').map(value => value.trim());
+            return headers.reduce((obj, header, index) => {
+              obj[header] = values[index];
+              return obj;
+            }, {} as Record<string, string>);
+          });
 
-      if (!response.ok) {
-        throw new Error('Failed to upload leads file');
+        // Process each lead
+        for (let lead of jsonData) {
+          try {
+            // Send to make-calls-leads endpoint
+            const callResponse = await axios.post(
+              'https://alive-cheetah-precisely.ngrok-free.app/make-call-lead    s',
+              lead
+            );
+            console.log('Call response for lead:', lead, callResponse.data);
+            
+            // Optional: Check call status
+            const statusResponse = await axios.get(
+              'https://alive-cheetah-precisely.ngrok-free.app/CallStatus'
+            );
+            console.log('Call status:', statusResponse.data);
+          } catch (error) {
+            console.error('Error processing lead:', lead, error);
+            toast.error(`Failed to process lead: ${lead.Email || 'Unknown'}`);
+          }
+        }
+
+        toast.success('Successfully processed all leads!');
+      } catch (error) {
+        console.error('Error processing CSV:', error);
+        toast.error('Failed to process CSV file. Please check the format.');
+      } finally {
+        setIsUploading(false);
       }
+    };
 
-      const result = await response.json();
-      console.log('Leads upload result:', result,'Call response:',call_response.data);
-      toast.success('Leads file uploaded successfully!');
-    } catch (error) {
-      console.error('Error uploading leads file:', error);
-      toast.error('Failed to upload leads file. Please try again.');
-    } finally {
-      setIsUploading(false);
-    }
+    reader.readAsText(file);
   };
-
 
   const handleLeadsGeneration = async () => {
     alert('Begin the lead generation process.......');
-
   };
 
   return (
@@ -50,14 +79,19 @@ const LeadsView = () => {
         <LeadGenerationPage />
         <h2 className="text-lg font-semibold mb-4">Import Leads</h2>
         <FileUpload
-          accept=".csv,.xlsx,.xls"
-          label="Upload leads file (CSV or Excel)"
+          accept=".csv"
+          label="Upload leads file (CSV)"
           onUpload={handleFileUpload}
           disabled={isUploading}
         />
-        {isUploading && <p className="text-sm text-gray-500 mt-2">Uploading...</p>}
+        {isUploading && <p className="text-sm text-gray-500 mt-2">Processing leads...</p>}
         <div className="flex justify-center mt-4">
-          <button onClick={handleLeadsGeneration} className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Start Leads Generation</button>
+          <button 
+            onClick={handleLeadsGeneration} 
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Start Leads Generation
+          </button>
         </div>
       </div>
       <LeadsList />
