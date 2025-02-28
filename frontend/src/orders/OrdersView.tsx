@@ -81,7 +81,7 @@ const OrdersView = () => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/start-confirmations/', {
+      const response = await fetch('https://d0rgham.pythonanywhere.com/api/start-confirmations/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -140,7 +140,7 @@ const AIAgentManager = () => {
 
   useEffect(() => {
     // Fetch agents from the API
-    fetch('http://127.0.0.1:8000/api/agents/')
+    fetch('https://d0rgham.pythonanywhere.com/api/agents/')
       .then((response) => response.json())
       .then((data) => {
         console.log('Fetched agents:', data); // Debugging: Log fetched data
@@ -155,7 +155,7 @@ const AIAgentManager = () => {
     console.log('Sending payload:', agentData); // Debugging: Log payload
     if (editingAgent) {
       // Update existing agent
-      fetch(`http://127.0.0.1:8000/api/agents/${editingAgent.id}/`, {
+      fetch(`https://d0rgham.pythonanywhere.com/api/agents/${editingAgent.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(agentData),
@@ -172,7 +172,7 @@ const AIAgentManager = () => {
         });
     } else {
       // Create new agent
-      fetch('http://127.0.0.1:8000/api/agents/', {
+      fetch('https://d0rgham.pythonanywhere.com/api/agents/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(agentData),
