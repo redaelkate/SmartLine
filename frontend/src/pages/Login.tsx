@@ -4,6 +4,7 @@ import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, Check } from 'lucide-react';
 import Logo from '../assets/Logo.png';
+import axiosInstance from '../axios';
 
 
 interface LoginFormData {
@@ -29,12 +30,15 @@ const Login: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null); // Clear any previous errors
-
+    
         try {
-            const response = await axios.post('https://d0rgham.pythonanywhere.com/auth/', formData);
+            const response = await axiosInstance.post('auth/', {
+                username: formData.username,
+                password: formData.password,
+            });
             console.log('Login successful:', response.data);
             login(response.data);  // Save user data in context
-            localStorage.setItem('token', response.data.tokken);
+            localStorage.setItem('token', response.data.token);
             navigate('/dashboard');  // Redirect to the dashboard after login
         } catch (error) {
             console.error('Login failed:', error.response?.data || error.message);

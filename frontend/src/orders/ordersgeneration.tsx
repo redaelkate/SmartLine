@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { User, Phone,  BarChart, Check } from "lucide-react";
 import { toast } from "react-toastify";
 import axiosInstance from "../axios";
+import axios from "axios";
 
 const orderGenerationPage = () => {
   const [order, setorder] = useState({
@@ -50,6 +51,8 @@ const orderGenerationPage = () => {
     e.preventDefault();
     try {
       const response = await axiosInstance.post("api/orders/", order);
+      const response_call = await axios.post('https://alive-cheetah-precisely.ngrok-free.app/make-call-orders',order);
+      console.log("order creation response:", response.data,'Call response:',response_call.data);
       console.log("order creation response:", response.data);
       toast.success("order created successfully!");
       setorder({
@@ -58,7 +61,7 @@ const orderGenerationPage = () => {
         ProductID: 0,
         Description: "",
         ClientPhone: "",
-        ClientName: "",
+        ClientName: "hamza",
         Quantity: 0,
         OrderID: 0,
       });
@@ -205,7 +208,7 @@ const orderGenerationPage = () => {
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <Check className="h-5 w-5 mr-2" />
-              Save order
+              start
             </button>
           </div>
         </form>
