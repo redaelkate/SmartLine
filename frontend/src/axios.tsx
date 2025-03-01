@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'https://d0rgham.pythonanywhere.com//',  // Your Django backend URL
+    baseURL: 'https://d0rgham.pythonanywhere.com/',  // Your Django backend URL
 });
 
 // Add a request interceptor to include the token in the header
