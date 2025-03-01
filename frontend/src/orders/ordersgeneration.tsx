@@ -4,6 +4,20 @@ import { toast } from "react-toastify";
 import axiosInstance from "../axios";
 import axios from "axios";
 
+
+  
+interface Product {
+  ProductID: number;
+  ProductName: string;
+  Price: number;
+  Description: string;
+  ClientPhone: string;
+  ClientName: string;
+  Quantity: number;
+  OrderID: number;
+
+}
+
 const orderGenerationPage = () => {
   const [order, setorder] = useState({
     ProductName: "",
@@ -14,8 +28,10 @@ const orderGenerationPage = () => {
     ClientName: "",
     Quantity: 0,
     OrderID: 0,
-    
+    TotalAmount: 0,
   });
+
+  
 
   const [products, setProducts] = useState([]);
   const fetchProducts = async () => {
@@ -64,6 +80,7 @@ const orderGenerationPage = () => {
         ClientName: "hamza",
         Quantity: 0,
         OrderID: 0,
+        TotalAmount: 0,
       });
     } catch (error) {
       console.error("Error creating order:", error);
@@ -132,9 +149,9 @@ const orderGenerationPage = () => {
                 value={order.ProductID}
                 onChange={handleInputChange}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" >
-                {products.map((product) => (
-                  <option key={product.id} value={product.name} onClick={()=>setorder((prev) => ({ ...prev, ProductID: product.id }))}>
-                    {product.name}
+                {products.map((product: Product) => (
+                  <option key={product.ProductID} value={product.ProductName} onClick={()=>setorder((prev) => ({ ...prev, ProductID: product.id }))}>
+                    {product.ProductName}
                   </option>
                 ))}
                 </select>
