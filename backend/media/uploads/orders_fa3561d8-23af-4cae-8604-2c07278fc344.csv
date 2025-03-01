@@ -1,0 +1,6 @@
+Lead_id,product_id,quantity,total_amount,payment_status,order_status
+1,10,9,903.93,Paid,Cancelled
+2,96,9,284.19,Pending,Delivered
+3,80,4,141.51,Failed,Shipped
+4,49,8,608.34,Failed,Processing
+5,38,9,128.42,Paid,Processing

@@ -9,10 +9,10 @@ from .models import (
     Organization, Admin, Agent, Call, CallTranscript, CallPerformance,
     AIInteractionMetrics, CustomerSatisfaction, AgentPerformance, CallTrends,
     CallQueue, ServiceLevel, ConversionAnalytics, AgentInteractionLog,
-    DetailedCallAnalytics,UploadedFile,Client
+    DetailedCallAnalytics,UploadedFile,Client,Product
 )
 
-from .serializers import ( AgentSerializer,ClientSerializer, CallSerializer, LeadGenerationSerializer, OrderConfirmationSerializer)
+from .serializers import ( AgentSerializer,ClientSerializer, CallSerializer, LeadGenerationSerializer, OrderConfirmationSerializer,ProductSerializer)
 import csv
 import io
 from rest_framework import viewsets
@@ -24,6 +24,10 @@ from .serializers import OrderConfirmationSerializer
 from django.db.models.functions import Length
 
 
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all()

@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from faker import Faker
+
 import random
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -7,7 +8,7 @@ from api.models import (
     Organization, Admin, Client, Agent, Call, CallTranscript, CallPerformance,
     AIInteractionMetrics, CustomerSatisfaction, AgentPerformance, CallTrends,
     CallQueue, ServiceLevel, ConversionAnalytics, AgentInteractionLog,
-    DetailedCallAnalytics, LeadGeneration, OrderConfirmation, UploadedFile
+    DetailedCallAnalytics, LeadGeneration, OrderConfirmation, UploadedFile,Product
 )
 
 from io import StringIO
@@ -33,7 +34,7 @@ class Command(BaseCommand):
         self.generate_call_queue()
         self.generate_service_level()
         self.generate_conversion_analytics()
-        self.generate_agent_interaction_logs()
+        #self.generate_agent_interaction_logs()
         self.generate_detailed_call_analytics()
         self.generate_lead_generation()
         self.generate_order_confirmations()
@@ -104,10 +105,11 @@ class Command(BaseCommand):
     def generate_call_transcripts(self):
         calls = Call.objects.all()
         for call in calls:
-            CallTranscript.objects.create(
-                call=call,
-                transcript=fake.text()
-            )
+            if not CallTranscript.objects.filter(call=call).exists():
+                CallTranscript.objects.create(
+                    call=call,
+                    transcript=fake.text()
+                )
         self.stdout.write(self.style.SUCCESS('Call transcripts created'))
 
     def generate_call_performance(self):
@@ -235,16 +237,17 @@ class Command(BaseCommand):
     def generate_detailed_call_analytics(self):
         calls = Call.objects.all()
         for call in calls:
-            DetailedCallAnalytics.objects.create(
-                call=call,
-                call_category=random.choice(['support', 'sales']),
-                resolution_time=random.uniform(60, 600),
-                follow_up_required=random.choice([True, False])
-            )
+            if not DetailedCallAnalytics.objects.filter(call=call).exists():
+                DetailedCallAnalytics.objects.create(
+                    call=call,
+                    call_category=random.choice(['support', 'sales']),
+                    resolution_time=random.uniform(60, 600),
+                    follow_up_required=random.choice([True, False])
+                )
         self.stdout.write(self.style.SUCCESS('Detailed call analytics created'))
 
     def generate_lead_generation(self):
-        for _ in range(20):
+        for _ in range(5):
             LeadGeneration.objects.create(
                 FirstName=fake.first_name(),
                 LastName=fake.last_name(),
@@ -256,7 +259,27 @@ class Command(BaseCommand):
                 LeadStatus=random.choice(['New', 'Contacted', 'Qualified', 'Lost'])
             )
         self.stdout.write(self.style.SUCCESS('Lead generation created'))
-
+    def generate_products(self,OrderID):
+        for _ in range(5):
+            """
+            ProductID: 0, Price: 0,
+            Description: "",
+            ClientPhone: "",
+            ClientName: "",
+            Quantity: 0,
+            OrderID: 0,
+            """
+            Product.objects.create(
+                Price=random.uniform(10, 1000),
+                Description=fake.text(),
+                ClientName=fake.name(),
+                ClientPhone=fake.phone_number(),
+                ProductName=fake.word(),
+                Quantity=random.randint(1, 10),
+                OrderID=OrderID,
+                
+            )
+        self.stdout.write(self.style.SUCCESS('Products created'))
     def generate_order_confirmations(self):
         leads = LeadGeneration.objects.all()
         for lead in leads:
@@ -269,7 +292,11 @@ class Command(BaseCommand):
                     PaymentStatus=random.choice(['Pending', 'Paid', 'Failed']),
                     OrderStatus=random.choice(['Processing', 'Shipped', 'Delivered', 'Cancelled'])
                 )
+            self.generate_products(OrderID=OrderConfirmation.objects.last().OrderID)
+            
         self.stdout.write(self.style.SUCCESS('Order confirmations created'))
+
+    
 
     def generate_uploaded_files(self):
     # Generate CSV files for leads
@@ -282,7 +309,7 @@ class Command(BaseCommand):
                 'job_title', 'lead_source', 'lead_status'
             ])
             # Write 10 rows of fake lead data
-            for _ in range(10):
+            for _ in range(5):
                 csv_writer.writerow([
                     fake.first_name(),  # first_name
                     fake.last_name(),   # last_name

@@ -110,14 +110,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'd0rgham$root',  # Replace with your database name
-        'USER': 'd0rgham',  # Replace with your database user
-        'PASSWORD': '3~AXtn2Ae7"J2H*',  # Replace with your database password
-        'HOST': 'd0rgham.mysql.pythonanywhere-services.com',  # Replace with your database host, e.g., 'localhost' or '127.0.0.1'
-        'PORT': '3306',  # Replace with your database port, e.g., '3306'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation

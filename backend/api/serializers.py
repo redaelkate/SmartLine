@@ -3,9 +3,14 @@ from .models import (
     Organization, Admin, Agent, Call, CallTranscript, CallPerformance,Client,
     AIInteractionMetrics, CustomerSatisfaction, AgentPerformance, CallTrends,
     CallQueue, ServiceLevel, ConversionAnalytics, AgentInteractionLog,LeadGeneration, OrderConfirmation,
-    DetailedCallAnalytics
+    DetailedCallAnalytics, Product
 )
 
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = '__all__'
 
 class OrderConfirmationSerializer(serializers.ModelSerializer):
     class Meta:

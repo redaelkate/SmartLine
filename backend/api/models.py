@@ -6,6 +6,31 @@ import uuid
 from django.db import models
 
 
+class Product(models.Model):
+    """
+     ProductName: "",
+    ProductID: 0,
+    Price: 0,
+    Description: "",
+    ClientPhone: "",
+    ClientName: "",
+    Quantity: 0,
+    OrderID: 0,
+    """
+    ProductName = models.CharField(max_length=50)  # Name of the product
+    ProductID = models.AutoField(primary_key=True)  # Unique identifier for each product
+    Price = models.DecimalField(max_digits=10, decimal_places=2,unique=False)  # Price of the product
+    Description = models.TextField()  # Description of the product
+    ClientPhone = models.CharField(max_length=15, blank=True, null=True)  # Phone number of the client
+    ClientName = models.CharField(max_length=50, blank=True, null=True)  # Name of the client
+    Quantity = models.IntegerField()  # Quantity of the product
+    OrderID = models.IntegerField()  # Foreign key to OrderConfirmation (assuming OrderID is an integer)
+
+    def __str__(self):
+        return self.name
+
+
+
 # Organization Model
 class Organization(models.Model):
     BASIC = 'basic'

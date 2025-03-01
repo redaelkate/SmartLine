@@ -10,7 +10,7 @@ from .views import (
     LeadGenerationListCreateView, LeadGenerationRetrieveUpdateDestroyView,
     OrderConfirmationListCreateView, OrderConfirmationRetrieveUpdateDestroyView,
     AgentListCreateView, AgentRetrieveUpdateDestroyView,
-    ClientViewSet, CallViewSet, AgentViewSet, UploadLeadsView, UploadOrdersView
+    ClientViewSet, CallViewSet, AgentViewSet, UploadLeadsView, UploadOrdersView, ProductViewSet
 )
 
 # Create a router and register the viewsets
@@ -18,6 +18,7 @@ router = DefaultRouter()
 router.register(r'clients', ClientViewSet)  # Generates URLs for ClientViewSet
 router.register(r'calls', CallViewSet)      # Generates URLs for CallViewSet
 router.register(r'agents', AgentViewSet)    # Generates URLs for AgentViewSet
+router.register(r'products', ProductViewSet)  # Generates URLs for LeadGenerationListCreateView
 
 urlpatterns = [
     # API endpoints for analytics and dashboards
