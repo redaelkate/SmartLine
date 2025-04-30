@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { User } from 'lucide-react';
-import axios from 'axios';
 import { XCircle } from 'lucide-react';
 import Modal from '../components/Modal';
 import { toast } from 'react-toastify';
